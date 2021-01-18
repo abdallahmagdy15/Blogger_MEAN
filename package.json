@@ -1,0 +1,27 @@
+{
+  "name": "blogger_mean",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --inspect .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdallahmagdy15/Blogger_MEAN.git"
+  },
+  "author": "Abdullah Magdy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abdallahmagdy15/Blogger_MEAN/issues"
+  },
+  "homepage": "https://github.com/abdallahmagdy15/Blogger_MEAN#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.12",
+    "util": "^0.12.3"
+  }
+}
