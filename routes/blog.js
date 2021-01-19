@@ -7,8 +7,16 @@ const { getBlogs, getOneBlog, createBlog, updateBlog, removeBlog } = require('..
 // get all blogs **searching by author needs to be handeled in different way
 router.get('/', async (req, res, next) => {
   let { query: { author, title, tag, limit, skip } } = req;
-  let _pagination = { limit, skip }
-  let _query = { title, tag }
+  let _query = {}
+  if (title != undefined)
+    _query.title = { $regex: "^" + title }
+  if (tag != undefined)
+    _query.tags = tag
+  if (limit == undefined || limit == '')
+    limit = 10
+  if (skip == undefined)
+    skip = 0
+  let _pagination = { limit: Number(limit), skip: Number(skip) }
   try {
     const blogs = await getBlogs(_query, _pagination, author) //check in controller if author undefined
     res.json(blogs);
@@ -19,11 +27,19 @@ router.get('/', async (req, res, next) => {
 
 // get user blogs
 router.get('/user/:userid', async (req, res, next) => {
-  let { params: { userid }, query: { author, title, tag, limit, skip } } = req;
-  let _pagination = { limit, skip }
-  let _query = { userid, title, tag }
+  let { params: { userid }, query: { title, tag, limit, skip } } = req;
+  let _query = {author:userid}
+  if (title != undefined && title != '')
+    _query.title = { $regex: "^" + title }
+  if (tag != undefined && tag != '')
+    _query.tags = tag
+  if (limit == undefined || limit == '')
+    limit = 10
+  if (skip == undefined)
+    skip = 0
+  let _pagination = { limit: Number(limit), skip: Number(skip) }
   try {
-    const blogs = await getBlogs(_query, _pagination, author)
+    const blogs = await getBlogs(_query, _pagination,undefined)
     res.json(blogs);
   } catch (e) {
     next(e);

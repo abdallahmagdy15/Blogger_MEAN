@@ -5,14 +5,16 @@ const { getUsers } = require('../controllers/user');
 
 const getBlogs = async (query, pagination, author) => {
     if (author == undefined)
-        return blogModel.find(query, null, pagination).exec();
+        return blogModel.find(query).limit(pagination.limit).skip(pagination.skip).exec();
     else {
         const foundUsers = await getUsers(author)
         let blogsIds = []
         foundUsers.forEach(u => {
             blogsIds.push(...u.blogs)
         })
-        return blogModel.find(query, null, pagination).where('_id').in(blogsIds).exec();
+        console.log(...blogsIds)
+        return blogModel.find(query).where('_id').in(blogsIds)
+            .limit(pagination.limit).skip(pagination.skip).exec();
     }
 
 }
