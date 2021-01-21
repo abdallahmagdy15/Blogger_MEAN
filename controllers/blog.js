@@ -16,7 +16,16 @@ const getBlogs = async (query, pagination, author) => {
         return blogModel.find(query).where('_id').in(blogsIds)
             .limit(pagination.limit).skip(pagination.skip).exec();
     }
+}
 
+
+const getFollowingsBlogs = async (query, pagination, author, followingsIds) => {
+    if (author == undefined)
+        return blogModel.find(query).limit(pagination.limit).skip(pagination.skip).exec();
+    else {
+        return blogModel.find(query).where('_id').in(followingsIds)
+            .limit(pagination.limit).skip(pagination.skip).exec();
+    }
 }
 
 const getOneBlog = (id) => blogModel.findById(id).exec();
@@ -36,11 +45,13 @@ const updateBlog = (id, blogBody) => {
 
 const removeBlog = async (id) => {
     const blog = await blogModel.findByIdAndDelete(id).exec()
+    if(id != blog.author)
+    return {"error":"Not Author"}
     await userModel.findByIdAndUpdate(query.author, { $pull: { blogs: blog.id } }, { new: true }).exec()
     return blog
 }
 
 
 module.exports = {
-    getBlogs, getOneBlog, createBlog, updateBlog, removeBlog
+    getBlogs, getOneBlog, createBlog, updateBlog, removeBlog, getFollowingsBlogs
 }

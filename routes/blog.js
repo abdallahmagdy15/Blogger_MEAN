@@ -2,16 +2,18 @@ const { query } = require('express');
 const express = require('express');
 const router = express.Router();
 
-const { getBlogs, getOneBlog, createBlog, updateBlog, removeBlog } = require('../controllers/blog');
+const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog } = require('../controllers/blog');
 
 // get all blogs **searching by author needs to be handeled in different way
 router.get('/', async (req, res, next) => {
-  let { query: { author, title, tag, limit, skip } } = req;
+  let { query: { author, body, title, tag, limit, skip } } = req;
   let _query = {}
   if (title != undefined)
     _query.title = { $regex: "^" + title }
   if (tag != undefined)
     _query.tags = tag
+  if (body != undefined)
+    _query.body = { $regex: ".*" + body + ".*" }
   if (limit == undefined || limit == '')
     limit = 10
   if (skip == undefined)
@@ -25,21 +27,46 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// get user blogs
-router.get('/user/:userid', async (req, res, next) => {
-  let { params: { userid }, query: { title, tag, limit, skip } } = req;
-  let _query = {author:userid}
-  if (title != undefined && title != '')
+//get followings' blogs
+router.get('/followings', async (req, res, next) => {
+  let { query: { author, title, tag, limit, skip } } = req;
+  let _query = {}
+  if (title != undefined)
     _query.title = { $regex: "^" + title }
-  if (tag != undefined && tag != '')
+  if (tag != undefined)
     _query.tags = tag
+  if (body != undefined)
+    _query.body = { $regex: ".*" + body + ".*" }
   if (limit == undefined || limit == '')
     limit = 10
   if (skip == undefined)
     skip = 0
   let _pagination = { limit: Number(limit), skip: Number(skip) }
   try {
-    const blogs = await getBlogs(_query, _pagination,undefined)
+    const blogs = await getFollowingsBlogs(_query, _pagination, author, req.user.followings) //check in controller if author undefined
+    res.json(blogs);
+  } catch (e) {
+    next(e);
+  }
+});
+
+// get user blogs
+router.get('/user/:userid', async (req, res, next) => {
+  let { params: { userid }, query: { title, tag, limit, skip } } = req;
+  let _query = { author: userid }
+  if (title != undefined && title != '')
+    _query.title = { $regex: "^" + title }
+  if (tag != undefined && tag != '')
+    _query.tags = tag
+  if (body != undefined)
+    _query.body = { $regex: ".*" + body + ".*" }
+  if (limit == undefined || limit == '')
+    limit = 10
+  if (skip == undefined)
+    skip = 0
+  let _pagination = { limit: Number(limit), skip: Number(skip) }
+  try {
+    const blogs = await getBlogs(_query, _pagination, undefined)
     res.json(blogs);
   } catch (e) {
     next(e);
@@ -81,7 +108,7 @@ router.patch('/:blogid', async (req, res, next) => {
 
 // delete blog  *** needs auth middlware to check id of token == id of todo owner
 router.delete('/:blogid', async (req, res, next) => {
-  const { params: { blogid } } = req;
+  const { user: { id }, params: { blogid } } = req;
   try {
     const blog = await removeBlog(blogid)
     res.json(blog);
