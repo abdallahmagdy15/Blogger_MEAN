@@ -2,6 +2,7 @@ const express = require('express')
 const logoRouter = require('./blog')
 const userRouter = require('./user')
 const router = express.Router()
+
 const authMiddleware = require('../middleware/authorization')
 
 // get all blogs **searching by author needs to be handeled in different way

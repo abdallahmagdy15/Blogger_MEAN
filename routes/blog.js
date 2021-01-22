@@ -1,6 +1,10 @@
 const { query } = require('express');
 const express = require('express');
 const router = express.Router();
+const multer = require('multer')
+const fs = require('fs')
+const path = require('path')
+
 
 const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog } = require('../controllers/blog');
 
@@ -83,10 +87,25 @@ router.get('/:blogid', async (req, res, next) => {
   }
 });
 
+//for uploading image of new blog
+var storage = multer.diskStorage({
+  destination:(req,file,cb)=>{
+      cb(null,'uploads')
+  },
+  filename:(req,file,cb){
+      cb(null,file.fieldname+'-'+Date.now())
+  }
+})
+const upload = multer({storage:storage})
 
 // create new blog
-router.post('/', async (req, res, next) => {
+router.post('/',upload.single('image'), async (req, res, next) => {
   const { body, user: { id } } = req;
+  body.photo = {
+    altname:req.body.photo,
+    data:fs.readFileSync(path.join(__dirname+'../uploads'+req.body.photo.filename)),
+    contentType:'image/png'
+  }
   try {
     const blog = await createBlog({ ...body, author: id })
     res.json(blog);

@@ -5,7 +5,11 @@ const blogSchema = new Schema({
     author: { type: Schema.Types.ObjectId, ref: 'user', required: true },
     title: { type: String, required: true, maxLength: 60 },
     body: { type: String, required: true, maxLength: 2100 },
-    photo: String,
+    photo: {
+        altname:String,
+        data: Buffer,
+        contentType: String
+    },
     tags: [String],
     createdAt: Date,
     updatedAt: Date
