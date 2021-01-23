@@ -7,7 +7,7 @@ const { getUsers } = require('../controllers/user');
 
 const getBlogs = async (query, pagination, author) => {
     if (author == undefined)
-        return blogModel.find(query).limit(pagination.limit).skip(pagination.skip).exec();
+        return blogModel.find(query).sort([['updatedAt',-1]]).limit(pagination.limit).skip(pagination.skip).exec();
     else {
         const foundUsers = await getUsers(author)
         let blogsIds = []
@@ -23,7 +23,7 @@ const getBlogs = async (query, pagination, author) => {
 
 const getFollowingsBlogs = async (query, pagination, author, followingsIds) => {
     if (author == undefined)
-        return blogModel.find(query).limit(pagination.limit).skip(pagination.skip).exec();
+        return blogModel.find(query).sort([['updatedAt',-1]]).limit(pagination.limit).skip(pagination.skip).exec();
     else {
         return blogModel.find(query).where('_id').in(followingsIds)
             .limit(pagination.limit).skip(pagination.skip).exec();

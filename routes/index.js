@@ -1,12 +1,13 @@
 const express = require('express')
-const logoRouter = require('./blog')
+const blogsRouter = require('./blog')
 const userRouter = require('./user')
 const router = express.Router()
+const { getBlogs } = require('../controllers/blog')
 
 const authMiddleware = require('../middleware/authorization')
 
-// get all blogs **searching by author needs to be handeled in different way
-router.get('/', async (req, res, next) => {
+// get all blogs for any user * homepage*
+router.get('/home', async (req, res, next) => {
     let { query: { limit, skip } } = req;
     let _query = {}
     if (limit == undefined || limit == '')
@@ -15,13 +16,13 @@ router.get('/', async (req, res, next) => {
         skip = 0
     let _pagination = { limit: Number(limit), skip: Number(skip) }
     try {
-        const blogs = await getBlogs(_query, _pagination,undefined) //check in controller if author undefined
+        const blogs = await getBlogs(_query, _pagination, undefined) //check in controller if author undefined
         res.json(blogs);
     } catch (e) {
         next(e);
     }
 });
-router.use('/blogs', authMiddleware, logoRouter)
+router.use('/blogs', authMiddleware, blogsRouter)
 
 router.use('/users', userRouter)
 

@@ -7,7 +7,7 @@ const path = require('path')
 const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog } = require('../controllers/blog');
 
 // get all blogs **searching by author needs to be handeled in different way
-router.get('/', async (req, res, next) => {
+router.get('/search', async (req, res, next) => {
   let { query: { author, body, title, tag, limit, skip } } = req;
   let _query = {}
   if (title != undefined)

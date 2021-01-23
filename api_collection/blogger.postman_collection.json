@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstName\":\"ahmed\",\r\n    \"lastName\":\"salah\",\r\n    \"username\":\"ahmedes\",\r\n    \"password\":\"123456\",\r\n    \"email\":\"a@a.a\",\r\n    \"dob\":\"01 Jan 1999 00:00:00 GMT\"\r\n}",
+							"raw": "{\r\n    \"firstName\":\"ahmed\",\r\n    \"lastName\":\"ali\",\r\n    \"username\":\"ahmedali\",\r\n    \"password\":\"123456\",\r\n    \"email\":\"a@a.a\",\r\n    \"dob\":\"01 Jan 1999 00:00:00 GMT\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -40,10 +40,17 @@
 					"name": "login",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiZGFsbGFobSIsImlkIjoiNjAwNWY4ZTNkNzNmMDQzMDY0MGYyMGNmIiwiaWF0IjoxNjExNDE3NjY4LCJleHAiOjE2MTE1MDQwNjh9.9HGL_ewN898ehnPijenG5wKsVEBg1aDHJQTkZPq-Qls",
+								"type": "text",
+								"disabled": true
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"abdallahm\",\r\n    \"password\": \"123456\"\r\n}",
+							"raw": "{\r\n    \"username\": \"ahmedali\",\r\n    \"password\": \"123456\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -59,6 +66,13 @@
 							"path": [
 								"users",
 								"login"
+							],
+							"query": [
+								{
+									"key": null,
+									"value": "",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -157,7 +171,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiZGFsbGFobSIsImlkIjoiNjAwNWY4ZTNkNzNmMDQzMDY0MGYyMGNmIiwiaWF0IjoxNjExMDA0ODM4LCJleHAiOjE2MTEwOTEyMzh9.5evx8EumFM03YoqTn-gTwT2qQpfCCwSxcjv41vmCIlQ",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFobWVkYWxpIiwiaWQiOiI2MDBjNmY5ZWFjZWUwOTBkZjhlYmYwOGQiLCJpYXQiOjE2MTE0Mjc3NjQsImV4cCI6MTYxMTUxNDE2NH0.Fp13PkNdVBgmVtmKpspftyzJsSttGCfYyAZp6Lv69BY",
 								"type": "text"
 							}
 						],
@@ -181,7 +195,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiZGFsbGFobSIsImlkIjoiNjAwNWY4ZTNkNzNmMDQzMDY0MGYyMGNmIiwiaWF0IjoxNjExMDA0ODM4LCJleHAiOjE2MTEwOTEyMzh9.5evx8EumFM03YoqTn-gTwT2qQpfCCwSxcjv41vmCIlQ",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFobWVkYWxpIiwiaWQiOiI2MDBjNmY5ZWFjZWUwOTBkZjhlYmYwOGQiLCJpYXQiOjE2MTE0MzAzMTUsImV4cCI6MTYxMTUxNjcxNX0.2m_souBFD-1cksbodMpK-2ct0xpKZw2RJBXDKuAxwbk",
 								"type": "text"
 							}
 						],
@@ -213,7 +227,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiZGFsbGFobSIsImlkIjoiNjAwNWY4ZTNkNzNmMDQzMDY0MGYyMGNmIiwiaWF0IjoxNjExMDA0ODM4LCJleHAiOjE2MTEwOTEyMzh9.5evx8EumFM03YoqTn-gTwT2qQpfCCwSxcjv41vmCIlQ",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFobWVkYWxpIiwiaWQiOiI2MDBjNmY5ZWFjZWUwOTBkZjhlYmYwOGQiLCJpYXQiOjE2MTE0MzAzMTUsImV4cCI6MTYxMTUxNjcxNX0.2m_souBFD-1cksbodMpK-2ct0xpKZw2RJBXDKuAxwbk",
 								"type": "text"
 							}
 						],
@@ -244,24 +258,76 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiZGFsbGFobSIsImlkIjoiNjAwNWY4ZTNkNzNmMDQzMDY0MGYyMGNmIiwiaWF0IjoxNjExMDc2NzIyLCJleHAiOjE2MTExNjMxMjJ9.jDdNw1417WmNTCFm5XePyEsL_noM4sifD7nkZW4BNeM",
+								"value": "",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "localhost:3000/blogs/?author=a",
+							"raw": "localhost:3000/blogs/search",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
 								"blogs",
-								""
+								"search"
 							],
 							"query": [
 								{
 									"key": "author",
-									"value": "a"
+									"value": "a",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "val",
+									"disabled": true
+								},
+								{
+									"key": "tag",
+									"value": "shitgame",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "skip",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "blogs (homepage)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"type": "text",
+								"value": ""
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/home",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"home"
+							],
+							"query": [
+								{
+									"key": "author",
+									"value": "a",
+									"disabled": true
 								},
 								{
 									"key": "title",
@@ -295,7 +361,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiZGFsbGFobSIsImlkIjoiNjAwNWY4ZTNkNzNmMDQzMDY0MGYyMGNmIiwiaWF0IjoxNjExMDc2ODY2LCJleHAiOjE2MTExNjMyNjZ9.wu_UgvJkk7QRQGhC7hGwbRQuultP8Cg4B6wF5nVMEaE",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiZGFsbGFobSIsImlkIjoiNjAwNWY4ZTNkNzNmMDQzMDY0MGYyMGNmIiwiaWF0IjoxNjExNDE3NjY4LCJleHAiOjE2MTE1MDQwNjh9.9HGL_ewN898ehnPijenG5wKsVEBg1aDHJQTkZPq-Qls",
 								"type": "text"
 							}
 						],
@@ -323,19 +389,79 @@
 					"response": []
 				},
 				{
+					"name": "create blog as form (upload photo)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiZGFsbGFobSIsImlkIjoiNjAwNWY4ZTNkNzNmMDQzMDY0MGYyMGNmIiwiaWF0IjoxNjExNDE3NjY4LCJleHAiOjE2MTE1MDQwNjh9.9HGL_ewN898ehnPijenG5wKsVEBg1aDHJQTkZPq-Qls"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "author",
+									"value": "6005f8e3d73f0430640f20cf",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "ITI last one",
+									"type": "text"
+								},
+								{
+									"key": "body",
+									"value": "I learned a lot from iti",
+									"type": "text"
+								},
+								{
+									"key": "tags[0]",
+									"value": "learn",
+									"type": "text"
+								},
+								{
+									"key": "photo",
+									"type": "file",
+									"src": "/E:/Pictures/2hands_logo.png"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "html"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/blogs/",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"blogs",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "update blog",
 					"request": {
 						"method": "PATCH",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiZGFsbGFobSIsImlkIjoiNjAwNWY4ZTNkNzNmMDQzMDY0MGYyMGNmIiwiaWF0IjoxNjExMDc2NzIyLCJleHAiOjE2MTExNjMxMjJ9.jDdNw1417WmNTCFm5XePyEsL_noM4sifD7nkZW4BNeM",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFobWVkYWxpIiwiaWQiOiI2MDBjNmY5ZWFjZWUwOTBkZjhlYmYwOGQiLCJpYXQiOjE2MTE0MzA5MjksImV4cCI6MTYxMTUxNzMyOX0.M2hxBhZOm-UAJtz47eQke1jbXoS8F1gtOyH1XzbrqcE",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"tags\":[\"bestgame\"]\r\n}",
+							"raw": "{\r\n    \"title\":\"new title\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -419,6 +545,43 @@
 								{
 									"key": "skip",
 									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "blogs of my followings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFobWVkYWxpIiwiaWQiOiI2MDBjNmY5ZWFjZWUwOTBkZjhlYmYwOGQiLCJpYXQiOjE2MTE0MzA5MjksImV4cCI6MTYxMTUxNzMyOX0.M2hxBhZOm-UAJtz47eQke1jbXoS8F1gtOyH1XzbrqcE",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/blogs/followings?limit=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"blogs",
+								"followings"
+							],
+							"query": [
+								{
+									"key": "body",
+									"value": "best",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "3"
 								}
 							]
 						}
