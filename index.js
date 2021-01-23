@@ -1,18 +1,15 @@
 const express = require('express');
 const router = require('./routes');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const app = express();
-const bodyParser= require('body-parser')
-
 
 mongoose.connect('mongodb://localhost:27017/blogsdb_iti', {useNewUrlParser: true, useUnifiedTopology: true});
 /// make db indecies*****************
 
 app.use(express.json());
-//setup body parser for http post data
-app.use(bodyParser.urlencoded({extended:false}))
-app.use(bodyParser.json())
+//set uploads as a static directory
+app.use(express.static(__dirname + '/public'));
+
 
 // setup routes
 app.use('/', router);
@@ -24,6 +21,7 @@ app.use((req, res, next) => {
 
 // error middleware handler
 app.use((err, req, res, next) => {
+  console.log(">ERROR*****>"+err);
   if (err instanceof mongoose.Error.ValidationError) {
     res.status(422).json(err);
   }

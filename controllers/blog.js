@@ -1,6 +1,8 @@
 const blogModel = require('../models/blog')
 const userModel = require('../models/user')
 
+
+
 const { getUsers } = require('../controllers/user');
 
 const getBlogs = async (query, pagination, author) => {
@@ -30,13 +32,15 @@ const getFollowingsBlogs = async (query, pagination, author, followingsIds) => {
 
 const getOneBlog = (id) => blogModel.findById(id).exec();
 
-const createBlog = async (query) => {
-    query.createdAt = new Date()
-    query.updatedAt = new Date()
-    const blog = await blogModel.create(query)
-    await userModel.findByIdAndUpdate(query.author, { $push: { blogs: blog.id } }, { new: true }).exec()
-    return blog
+const createBlog = async (res,blog) => {
+    blog.createdAt = new Date()
+    blog.updatedAt = new Date()
+    const _blog = await blogModel.create(blog)
+    await userModel.findByIdAndUpdate(blog.author, { $push: { blogs: _blog.id } }, { new: true }).exec()
+    res.send(_blog)
 }
+//
+
 
 const updateBlog = (id, blogBody) => {
     blogBody.updatedAt = new Date()
@@ -45,13 +49,13 @@ const updateBlog = (id, blogBody) => {
 
 const removeBlog = async (id) => {
     const blog = await blogModel.findByIdAndDelete(id).exec()
-    if(id != blog.author)
-    return {"error":"Not Author"}
+    if (id != blog.author)
+        return { "error": "Not Author" }
     await userModel.findByIdAndUpdate(query.author, { $pull: { blogs: blog.id } }, { new: true }).exec()
     return blog
 }
 
 
 module.exports = {
-    getBlogs, getOneBlog, createBlog, updateBlog, removeBlog, getFollowingsBlogs
+    getBlogs, getOneBlog, createBlog, updateBlog, removeBlog, getFollowingsBlogs 
 }

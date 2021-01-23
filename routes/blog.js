@@ -1,10 +1,8 @@
-const { query } = require('express');
 const express = require('express');
 const router = express.Router();
 const multer = require('multer')
-const fs = require('fs')
+const helpers = require('../helpers/helpers');
 const path = require('path')
-
 
 const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog } = require('../controllers/blog');
 
@@ -33,7 +31,7 @@ router.get('/', async (req, res, next) => {
 
 //get followings' blogs
 router.get('/followings', async (req, res, next) => {
-  let { query: { author, title, tag, limit, skip } } = req;
+  let { query: { author, body, title, tag, limit, skip } } = req;
   let _query = {}
   if (title != undefined)
     _query.title = { $regex: "^" + title }
@@ -56,7 +54,7 @@ router.get('/followings', async (req, res, next) => {
 
 // get user blogs
 router.get('/user/:userid', async (req, res, next) => {
-  let { params: { userid }, query: { title, tag, limit, skip } } = req;
+  let { params: { userid }, query: { title, body, tag, limit, skip } } = req;
   let _query = { author: userid }
   if (title != undefined && title != '')
     _query.title = { $regex: "^" + title }
@@ -87,31 +85,47 @@ router.get('/:blogid', async (req, res, next) => {
   }
 });
 
-//for uploading image of new blog
-var storage = multer.diskStorage({
-  destination:(req,file,cb)=>{
-      cb(null,'uploads')
+
+//define the storage location for images
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
   },
-  filename:(req,file,cb){
-      cb(null,file.fieldname+'-'+Date.now())
+
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
-})
-const upload = multer({storage:storage})
+});
+
 
 // create new blog
-router.post('/',upload.single('image'), async (req, res, next) => {
-  const { body, user: { id } } = req;
-  body.photo = {
-    altname:req.body.photo,
-    data:fs.readFileSync(path.join(__dirname+'../uploads'+req.body.photo.filename)),
-    contentType:'image/png'
-  }
-  try {
-    const blog = await createBlog({ ...body, author: id })
-    res.json(blog);
-  } catch (e) {
-    next(e);
-  }
+router.post('/', async (req, res, next) => {
+  // 'photo' is the name of our file input field in the HTML form
+  let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('photo');
+
+  upload(req, res, function (err) {
+    const { body, user: { id } } = req;
+    // req.file contains information of uploaded file
+    // req.body contains information of text fields, if there were any
+    if (req.fileValidationError) {
+      return res.send(req.fileValidationError);
+    }
+    else if (err instanceof multer.MulterError) {
+      return res.send(err);
+    }
+    else if (err) {
+      return res.send(err);
+    }
+    if (req.file != undefined)
+      body.photo = req.file.path
+    try {
+      createBlog(res, { ...body, author: id })
+    } catch (e) {
+      next(e);
+    }
+    // Display uploaded image for user validation
+    //res.send(`You have uploaded this image: <hr/><img src="${req.file.path}" width="500"><hr /><a href="./">Upload another image</a>`);
+  })
 });
 
 // update one blog *** needs auth middlware to check id of token == id of todo owner
