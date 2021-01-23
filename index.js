@@ -2,9 +2,9 @@ const express = require('express');
 const router = require('./routes');
 const mongoose = require('mongoose');
 const app = express();
-const atlasMongodbUri = process.env.MONGODB_URI;
+const atlasUri = process.env.MONGODB_URI;
 
-mongoose.connect(atlasMongodbUri, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(atlasUri, {useNewUrlParser: true, useUnifiedTopology: true});
 /// make db indecies*****************
 
 app.use(express.json());
