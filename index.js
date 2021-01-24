@@ -8,6 +8,7 @@ mongoose.connect(MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
 /// make db indecies*****************
 
 app.use(express.json());
+app.use(express.static(__dirname + '/uploads'));
 
 
 // setup routes

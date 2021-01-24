@@ -118,25 +118,14 @@ router.post('/', async (req, res, next) => {
     }
     if (req.file != undefined)
       body.photo = req.file.path
-    try {
-      createBlog(res, { ...body, author: id })
-    } catch (e) {
-      next(e);
-    }
-    // Display uploaded image for user validation
-    //res.send(`You have uploaded this image: <hr/><img src="${req.file.path}" width="500"><hr /><a href="./">Upload another image</a>`);
+      createBlog({ ...body, author: id }).then(blog=>res.json(blog)).catch(err=>next(err))
   })
 });
 
 // update one blog *** needs auth middlware to check id of token == id of todo owner
-router.patch('/:blogid', async (req, res, next) => {
+router.patch('/:blogid',  (req, res, next) => {
   const { body, params: { blogid } } = req;
-  try {
-    const blog = await updateBlog(blogid, body)
-    res.json(blog);
-  } catch (e) {
-    next(e);
-  }
+    updateBlog(blogid, body).then(blog=>res.json(blog)).catch(err=>next(err))
 });
 
 // delete blog  *** needs auth middlware to check id of token == id of todo owner

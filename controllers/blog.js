@@ -53,18 +53,20 @@ const getOneBlog = (id) => blogModel.findById(id).exec();
 const createBlog = async (res,blog) => {
     blog.createdAt = new Date()
     blog.updatedAt = new Date()
-    const _blog = await blogModel.create(blog).then(function () {
-        console.log(`createBlog works`);
-    }).catch(function (err) {
-        console.log(`caught the error in createBlog: ${err}`);
-    });
+    //update user blogs
     await userModel.findByIdAndUpdate(blog.author, { $push: { blogs: _blog.id } }, { new: true })
     .exec().then(function () {
         console.log(`createBlog works`);
     }).catch(function (err) {
         console.log(`caught the error in createBlog: ${err}`);
     });
-    res.send(_blog)
+    
+    return blogModel.create(blog).then(function () {
+        console.log(`createBlog works`);
+    }).catch(function (err) {
+        console.log(`caught the error in createBlog: ${err}`);
+    });
+    
 }
 //
 
