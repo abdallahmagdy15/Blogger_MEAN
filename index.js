@@ -2,14 +2,14 @@ const express = require('express');
 const router = require('./routes');
 const mongoose = require('mongoose');
 const app = express();
-const path = require('path')
+
 const {MONGODB_URI} = process.env;
 mongoose.connect(MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 /// make db indecies*****************
 
 app.use(express.json());
-
-app.use('/',express.static(path.join(__dirname+ '/uploads')));
+app.use(express.static(__dirname + '/uploads'));
+//app.use('/',express.static(path.join(__dirname+ '/uploads')));
 
 
 // setup routes
