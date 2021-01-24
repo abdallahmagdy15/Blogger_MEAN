@@ -9,7 +9,6 @@ mongoose.connect(MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
 
 app.use(express.json());
 app.use(express.static(__dirname+ '/public'));
-app.use('/uploads',express.static(__dirname+ '/public/uploads'));
 
 
 
