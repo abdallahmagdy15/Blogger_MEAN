@@ -2,9 +2,9 @@ const express = require('express');
 const router = require('./routes');
 const mongoose = require('mongoose');
 const app = express();
-const uri = process.env.MONGODB_URI;
 
-mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
+const {MONGODB_URI} = process.env;
+mongoose.connect(MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 /// make db indecies*****************
 
 app.use(express.json());
@@ -14,6 +14,7 @@ app.use(express.static(__dirname + '/public'));
 
 // setup routes
 app.use('/', router);
+
 
 // if any other paths response with not found 404
 app.use((req, res, next) => {

@@ -45,7 +45,7 @@ const login = async ({ username, password }) => {
 
 const follow = (userid, followedid) => {
     if (userid == followedid)
-        return { "status": "can't follow your self idiot" }
+        return { "status": "can't follow your self" }   
     //update follower's followings
     userModel.findByIdAndUpdate(userid, { $push: { followings: followedid } }, { new: true }).exec()
 
