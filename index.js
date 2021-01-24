@@ -8,8 +8,6 @@ mongoose.connect(MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
 /// make db indecies*****************
 
 app.use(express.json());
-//set uploads as a static directory
-app.use(express.static(__dirname + '/public'));
 
 
 // setup routes
@@ -23,7 +21,8 @@ app.use((req, res, next) => {
 
 // error middleware handler
 app.use((err, req, res, next) => {
-  console.log(">ERROR*****>"+err);
+  console.log(">ERROR>"+err);
+  
   if (err instanceof mongoose.Error.ValidationError) {
     res.status(422).json(err);
   }
