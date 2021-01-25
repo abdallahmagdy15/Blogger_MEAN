@@ -22,7 +22,6 @@ router.get('/search', async (req, res, next) => {
     skip = 0
   let _pagination = { limit: Number(limit), skip: Number(skip) }
   getBlogs(_query, _pagination, author).then(blogs => res.json(blogs)).catch(err => next(err))
-
 });
 
 //get followings' blogs

@@ -6,7 +6,7 @@ const verifyJWT = promisify(jwt.verify);
 const auth = async (req, res, next) => {
     const { headers: { authorization } } = req
     if (!authorization)
-        next(new Error('NOT_AUTHORIZED'))
+        next(new Error('AUTHENTICATION_REQUIRED'))
     try {
         ////verify token
         const { id } = await verifyJWT(authorization, process.env.SECRET)
@@ -14,7 +14,7 @@ const auth = async (req, res, next) => {
         req.user = user
         next()        
     } catch (e) {
-        next((new Error('NOT_AUTHORIZED')));
+        next(new Error('AUTHENTICATION_REQUIRED'));
     }
 }
 
