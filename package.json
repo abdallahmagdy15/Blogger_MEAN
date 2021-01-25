@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "heroku-postbuild":"heroku done building..."
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm"
   },
   "repository": {
     "type": "git",
