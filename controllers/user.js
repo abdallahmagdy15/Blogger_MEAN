@@ -38,7 +38,7 @@ const login = async ({ username, password }) => {
     const token = await jwtSignAsync({
         username: username,
         id: user.id,
-    }, 'tokenSecret', { expiresIn: '1d' });
+    }, proccess.env.SECRET, { expiresIn: '1d' });
 
     return { ...user.toJSON(), token } // this will be returned as promise
 }
