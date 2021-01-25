@@ -26,10 +26,10 @@ app.use((req, res, next) => {
 
 // error middleware handler
 app.use((err, req, res, next) => {
-  console.log(">ERROR>" + err);
+  console.log(">ERROR>" + err.message);
 
   if (err instanceof mongoose.Error) {
-    res.status(422).json(err);
+    res.status(422).json(err.message);
   }
   if (err.code == 11000) {
     res.status(422).json({
@@ -43,7 +43,7 @@ app.use((err, req, res, next) => {
   };
 
   const { statusCode = 500 } = err;
-  res.status(statusCode).json(err);
+  res.status(statusCode).json(err.message);
 });
 
 const { PORT = 3000 } = process.env;
