@@ -9,7 +9,6 @@ const auth = async (req, res, next) => {
         next(new Error('NOT_AUTHORIZED'))
     try {
         ////verify token
-        //***const token = authorization.replace('Bearer', '').trim();
         const { id } = await verifyJWT(authorization, 'tokenSecret')
         const user = await userModel.findById(id).exec()
         req.user = user

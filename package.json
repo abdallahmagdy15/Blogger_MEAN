@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node .",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "heroku-postbuild":"heroku done building..."
   },
@@ -27,6 +27,6 @@
     "util": "^0.12.3"
   },
   "engines": {
-    "node": "10.x"
+    "node": "10.16.0"
   }
 }
