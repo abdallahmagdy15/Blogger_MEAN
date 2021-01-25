@@ -3,9 +3,9 @@ const router = require('./routes');
 const mongoose = require('mongoose');
 const app = express();
 
-const {MONGODB_URI="mongodb+srv://iti_blogger_admin:mKNu5aHk1fbKdZPB@iti-blogger-db.rz8tp.mongodb.net/ITI-Blogger-DB?retryWrites=true&w=majority"
+const { MONGODB_URI = "mongodb+srv://iti_blogger_admin:mKNu5aHk1fbKdZPB@iti-blogger-db.rz8tp.mongodb.net/ITI-Blogger-DB?retryWrites=true&w=majority"
 } = process.env;
-mongoose.connect(MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 /// make db indecies*****************
 
 app.use(express.json());
@@ -15,7 +15,9 @@ app.use(express.json());
 
 // setup routes
 app.use('/', router);
-
+app.use('/test', (req, res, next) => {
+  res.json({ "test": "success" })
+})
 
 // if any other paths response with not found 404
 app.use((req, res, next) => {
@@ -24,8 +26,8 @@ app.use((req, res, next) => {
 
 // error middleware handler
 app.use((err, req, res, next) => {
-  console.log(">ERROR>"+err);
-  
+  console.log(">ERROR>" + err);
+
   if (err instanceof mongoose.Error.ValidationError) {
     res.status(422).json(err);
   }
@@ -40,11 +42,11 @@ app.use((err, req, res, next) => {
     });
   };
 
-  const {statusCode = 500} = err;
+  const { statusCode = 500 } = err;
   res.status(statusCode).json(err);
 });
 
-const {PORT = 3000} = process.env;
+const { PORT = 3000 } = process.env;
 app.listen(PORT, () => {
   console.log('started on ' + PORT);
 });
