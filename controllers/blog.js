@@ -49,16 +49,17 @@ const getOneBlog = (id) => blogModel.findById(id).exec().then().catch(e=>{
 const createBlog = async (blog) => {
     blog.createdAt = new Date()
     blog.updatedAt = new Date()
+    
+    const _blog = await blogModel.create(blog).then().catch(e=>{
+        throw new Error("Caught error in createBlog :",e)
+    })     
     //update user blogs
     userModel.findByIdAndUpdate(blog.author, { $push: { blogs: _blog.id } }, { new: true })
     .exec().then().catch(e=>{
         throw new Error("Caught error in createBlog :",e)
     })
     
-    return blogModel.create(blog).then().catch(e=>{
-        throw new Error("Caught error in createBlog :",e)
-    })
-    
+    return _blog;
 }
 //
 
