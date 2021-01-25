@@ -3,11 +3,10 @@ const router = require('./routes');
 const mongoose = require('mongoose');
 const app = express();
 
-const { MONGODB_URI = "mongodb+srv://iti_blogger_admin:mKNu5aHk1fbKdZPB@iti-blogger-db.rz8tp.mongodb.net/ITI-Blogger-DB?retryWrites=true&w=majority"
-} = process.env;
+const { MONGODB_URI } = process.env;
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-.then(() => console.log('Mongodb Connected !'))
-.catch((e) => console.log('caught error while connecting to db : ',e));
+  .then(() => console.log('Mongodb Connected !'))
+  .catch((e) => console.log('caught error while connecting to db : ', e));
 
 app.use(express.json());
 //app.use(express.static(__dirname+ '/public'));
