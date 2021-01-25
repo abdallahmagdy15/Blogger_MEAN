@@ -12,7 +12,7 @@ const auth = async (req, res, next) => {
         const { id } = await verifyJWT(authorization, process.env.SECRET)
         const user = await userModel.findById(id).exec()
         req.user = user
-        next()        
+        next()
     } catch (e) {
         next(new Error('AUTHENTICATION_REQUIRED'));
     }

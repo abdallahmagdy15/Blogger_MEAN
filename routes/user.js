@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { getUser,getUsers,getFollowers ,getFollowings,
-   register, login, update, remove, follow, unfollow } = require('../controllers/user');
+const { getUser, getUsers, getFollowers, getFollowings,
+  register, login, update, remove, follow, unfollow } = require('../controllers/user');
 const userModel = require('../models/user');
 const authMiddleware = require('../middleware/authorization')
 
 // get users * search by name
 //users?author="aaa"
-router.get('/',authMiddleware, async (req, res, next) => {
+router.get('/', authMiddleware, async (req, res, next) => {
   let { query: { author } } = req
   try {
     const allUsers = await getUsers(author);
@@ -19,7 +19,7 @@ router.get('/',authMiddleware, async (req, res, next) => {
 
 //get user profile
 //users/123456
-router.get('/:userid',authMiddleware, async (req, res, next) => {
+router.get('/:userid', authMiddleware, async (req, res, next) => {
   let { params: { userid } } = req
   try {
     const user = await getUser(userid);
@@ -31,7 +31,7 @@ router.get('/:userid',authMiddleware, async (req, res, next) => {
 
 //get followers
 //users/123456/followers
-router.get('/:userid/followers',authMiddleware, async (req, res, next) => {
+router.get('/:userid/followers', authMiddleware, async (req, res, next) => {
   let { params: { userid } } = req
   try {
     const followers = await getFollowers(userid);
@@ -43,7 +43,7 @@ router.get('/:userid/followers',authMiddleware, async (req, res, next) => {
 
 //get followings
 //users/123456/followings
-router.get('/:userid/followings',authMiddleware, async (req, res, next) => {
+router.get('/:userid/followings', authMiddleware, async (req, res, next) => {
   let { params: { userid } } = req
   try {
     const followings = await getFollowings(userid);
@@ -54,10 +54,10 @@ router.get('/:userid/followings',authMiddleware, async (req, res, next) => {
 })
 
 //follow user
-router.post('/follow/:userid',authMiddleware, async (req, res, next) => {
-  let { user: {id},params: { userid } } = req
+router.post('/follow/:userid', authMiddleware, async (req, res, next) => {
+  let { user: { id }, params: { userid } } = req
   try {
-    const user = await follow(id,userid)
+    const user = await follow(id, userid)
     res.json(user);
   } catch (e) {
     next(e);
@@ -65,10 +65,10 @@ router.post('/follow/:userid',authMiddleware, async (req, res, next) => {
 })
 
 //unfollow user
-router.post('/unfollow/:userid',authMiddleware, async (req, res, next) => {
-  let { user: {id},params: { userid } } = req
+router.post('/unfollow/:userid', authMiddleware, async (req, res, next) => {
+  let { user: { id }, params: { userid } } = req
   try {
-    const user = await unfollow(id , userid)
+    const user = await unfollow(id, userid)
     res.json(user);
   } catch (e) {
     next(e);
@@ -101,7 +101,7 @@ router.post('/register', async (req, res, next) => {
 //_______unrequired
 
 // update one user data
-router.patch('/',authMiddleware, async (req, res, next) => {
+router.patch('/', authMiddleware, async (req, res, next) => {
   const { user: { id }, body: userUpdated } = req;
   try {
     const user = await update(id, userUpdated)
@@ -112,7 +112,7 @@ router.patch('/',authMiddleware, async (req, res, next) => {
 });
 
 // delete user
-router.delete('/',authMiddleware, async (req, res, next) => {
+router.delete('/', authMiddleware, async (req, res, next) => {
   try {
     const user = await remove(req.user.id)
     res.json(user);
