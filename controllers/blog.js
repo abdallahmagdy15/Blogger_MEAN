@@ -8,24 +8,22 @@ const { getUsers } = require('../controllers/user');
 const getBlogs = async (query, pagination, author) => {
     if (author == undefined)
         return blogModel.find(query).sort([['updatedAt',-1]])
-        .limit(pagination.limit).skip(pagination.skip).exec().then(function () {
-            console.log(`getBlogs works`);
-        }).catch(function (err) {
-            console.log(`caught the error: ${err}`);
-        });
+        .limit(pagination.limit).skip(pagination.skip).exec().then().catch(e=>{
+            throw new Error("Caught error in getBlogs :",e)
+        })
     else {
-        const foundUsers = await getUsers(author)
+        const foundUsers = await getUsers(author).then().catch(e=>{
+            throw new Error("Caught error in getBlogs :",e)
+        })
         let blogsIds = []
         foundUsers.forEach(u => {
             blogsIds.push(...u.blogs)
         })
         console.log(...blogsIds)
         return blogModel.find(query).where('_id').in(blogsIds)
-            .limit(pagination.limit).skip(pagination.skip).exec().then(function () {
-                console.log(`getBlogs works`);
-            }).catch(function (err) {
-                console.log(`caught the error in getBlogs: ${err}`);
-            });
+            .limit(pagination.limit).skip(pagination.skip).exec().then().catch(e=>{
+                throw new Error("Caught error in getBlogs :",e)
+            })
     }
 }
 
@@ -33,71 +31,61 @@ const getBlogs = async (query, pagination, author) => {
 const getFollowingsBlogs = async (query, pagination, author, followingsIds) => {
     if (author == undefined)
         return blogModel.find(query).sort([['updatedAt',-1]]).limit(pagination.limit).skip(pagination.skip)
-        .exec().then(function () {
-            console.log(`getFollowingsBlogs works`);
-        }).catch(function (err) {
-            console.log(`caught the error in getFollowingsBlogs: ${err}`);
-        });
+        .exec().then().catch(e=>{
+            throw new Error("Caught error in getFollowingsBlogs :",e)
+        })
     else {
         return blogModel.find(query).where('_id').in(followingsIds)
-            .limit(pagination.limit).skip(pagination.skip).exec().then(function () {
-                console.log(`getFollowingsBlogs works`);
-            }).catch(function (err) {
-                console.log(`caught the error in getFollowingsBlogs: ${err}`);
-            });
+            .limit(pagination.limit).skip(pagination.skip).exec().then().catch(e=>{
+                throw new Error("Caught error in getFollowingsBlogs :",e)
+            })
     }
 }
 
-const getOneBlog = (id) => blogModel.findById(id).exec();
+const getOneBlog = (id) => blogModel.findById(id).exec().then().catch(e=>{
+    throw new Error("Caught error in getOneBlog :",e)
+})
 
-const createBlog = async (res,blog) => {
+const createBlog = async (blog) => {
     blog.createdAt = new Date()
     blog.updatedAt = new Date()
     //update user blogs
-    await userModel.findByIdAndUpdate(blog.author, { $push: { blogs: _blog.id } }, { new: true })
-    .exec().then(function () {
-        console.log(`createBlog works`);
-    }).catch(function (err) {
-        console.log(`caught the error in createBlog: ${err}`);
-    });
+    userModel.findByIdAndUpdate(blog.author, { $push: { blogs: _blog.id } }, { new: true })
+    .exec().then().catch(e=>{
+        throw new Error("Caught error in createBlog :",e)
+    })
     
-    return blogModel.create(blog).then(function () {
-        console.log(`createBlog works`);
-    }).catch(function (err) {
-        console.log(`caught the error in createBlog: ${err}`);
-    });
+    return blogModel.create(blog).then().catch(e=>{
+        throw new Error("Caught error in createBlog :",e)
+    })
     
 }
 //
 
 
-const updateBlog = (id, blogBody) => {
+const updateBlog = (id,blogid, blogBody) => {
+    if (id != blogid)
+        return {"status":"Denied , not authorized to update this blog!"}
     blogBody.updatedAt = new Date()
-    return blogModel.findByIdAndUpdate(id, blogBody, { new: true })
-    .exec().then(function () {
-        console.log(`updateBlog works`);
-    }).catch(function (err) {
-        console.log(`caught the error in updateBlog: ${err}`);
-    });
+    return blogModel.findByIdAndUpdate(blogid, blogBody, { new: true })
+    .exec().then().catch(e=>{
+        throw new Error("Caught error in updateBlog :",e)
+    })
 }
 
-const removeBlog = async (id) => {
-    const blog = await blogModel.findByIdAndDelete(id)
-    .exec().then(function () {
-        console.log(`removeBlog works`);
-    }).catch(function (err) {
-        console.log(`caught the error in removeBlog: ${err}`);
-    });
+const removeBlog = async (id, blogid) => {
+    const blog = await blogModel.findByIdAndDelete(blogid)
+    .exec().then().catch(e=>{
+        throw new Error("Caught error in removeBlog :",e)
+    })
 
-    if (id != blog.author)
-        throw new Error( "Denied : Can't delete the blog because you are not the author" )
+    if (id != blogid)
+        return {"status":"Denied , not authorized to delete this blog!"}
         
     await userModel.findByIdAndUpdate(query.author, { $pull: { blogs: blog.id } }, { new: true })
-    .exec().then(function () {
-        console.log(`removeBlog works`);
-    }).catch(function (err) {
-        console.log(`caught the error in removeBlog: ${err}`);
-    });
+    .exec().then().catch(e=>{
+        throw new Error("Caught error in removeBlog :",e)
+    })
     return blog
 }
 

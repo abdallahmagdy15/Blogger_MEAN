@@ -6,7 +6,7 @@ const path = require('path')
 
 const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog } = require('../controllers/blog');
 
-// get all blogs **searching by author needs to be handeled in different way
+// get all blogs
 router.get('/search', async (req, res, next) => {
   let { query: { author, body, title, tag, limit, skip } } = req;
   let _query = {}
@@ -21,12 +21,8 @@ router.get('/search', async (req, res, next) => {
   if (skip == undefined)
     skip = 0
   let _pagination = { limit: Number(limit), skip: Number(skip) }
-  try {
-    const blogs = await getBlogs(_query, _pagination, author) //check in controller if author undefined
-    res.json(blogs);
-  } catch (e) {
-    next(e);
-  }
+  getBlogs(_query, _pagination, author).then(blogs => res.json(blogs)).catch(err => next(err))
+
 });
 
 //get followings' blogs
@@ -118,21 +114,21 @@ router.post('/', async (req, res, next) => {
     }
     if (req.file != undefined)
       body.photo = req.file.path
-      createBlog({ ...body, author: id }).then(blog=>res.json(blog)).catch(err=>next(err))
+    createBlog({ ...body, author: id }).then(blog => res.json(blog)).catch(err => next(err))
   })
 });
 
 // update one blog *** needs auth middlware to check id of token == id of todo owner
-router.patch('/:blogid',  (req, res, next) => {
-  const { body, params: { blogid } } = req;
-    updateBlog(blogid, body).then(blog=>res.json(blog)).catch(err=>next(err))
+router.patch('/:blogid', (req, res, next) => {
+  const { user: { id }, body, params: { blogid } } = req;
+  updateBlog(id, blogid, body).then(blog => res.json(blog)).catch(err => next(err))
 });
 
 // delete blog  *** needs auth middlware to check id of token == id of todo owner
 router.delete('/:blogid', async (req, res, next) => {
   const { user: { id }, params: { blogid } } = req;
   try {
-    const blog = await removeBlog(blogid)
+    const blog = await removeBlog(id, blogid)
     res.json(blog);
   } catch (e) {
     next(e);

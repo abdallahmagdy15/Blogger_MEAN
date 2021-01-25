@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   console.log(">ERROR>" + err);
 
-  if (err instanceof mongoose.Error.ValidationError) {
+  if (err instanceof mongoose.Error) {
     res.status(422).json(err);
   }
   if (err.code == 11000) {
