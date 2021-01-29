@@ -10,8 +10,7 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true 
 
 app.use(express.json());
 //app.use(express.static(__dirname+ '/public'));
-
-
+//aaaa
 
 // setup routes
 app.use('/', router);
@@ -23,6 +22,8 @@ app.use('/test', (req, res, next) => {
 app.use((req, res, next) => {
   res.status(404).end();
 });
+
+//console.log
 
 // error middleware handler
 app.use((err, req, res, next) => {
