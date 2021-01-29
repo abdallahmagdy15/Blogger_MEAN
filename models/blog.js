@@ -5,10 +5,29 @@ const blogSchema = new Schema({
     author: { type: Schema.Types.ObjectId, ref: 'user', required: true },
     title: { type: String, required: true, maxLength: 60 },
     body: { type: String, required: true, maxLength: 2100 },
+    authorDp: String,
+    authorName: String,
     photo: String,
     tags: [String],
     createdAt: Date,
-    updatedAt: Date
+    updatedAt: Date,
+    comments: [{
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        userDp: String,
+        userName: String,
+        body: {
+            type: String,
+            maxlength: 1024,
+            required: true
+        },
+        photo: String,
+        likesCount: Number
+    }],
+    likesCount: Number
 })
 
 const blogModel = Mongoose.model('blog', blogSchema)

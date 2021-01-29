@@ -4,7 +4,7 @@ const multer = require('multer')
 const helpers = require('../helpers/helpers');
 const path = require('path')
 
-const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog } = require('../controllers/blog');
+const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog, createComment } = require('../controllers/blog');
 
 // get all blogs
 router.get('/search', async (req, res, next) => {
@@ -99,7 +99,7 @@ router.post('/', async (req, res, next) => {
   let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('photo');
 
   upload(req, res, function (err) {
-    const { body, user: { id } } = req;
+    const { body, user: { id, DisplayPicture, firstName, lastName } } = req;
     // req.file contains information of uploaded file
     // req.body contains information of text fields, if there were any
     if (req.fileValidationError) {
@@ -113,7 +113,7 @@ router.post('/', async (req, res, next) => {
     }
     if (req.file != undefined)
       body.photo = req.file.path
-    createBlog({ ...body, author: id }).then(blog => res.json(blog)).catch(err => next(err))
+    createBlog({ ...body, author: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName }).then(blog => res.json(blog)).catch(err => next(err))
   })
 });
 
@@ -133,5 +133,31 @@ router.delete('/:blogid', async (req, res, next) => {
     next(e);
   }
 });
+
+//create comment
+router.post('/comment', async (req, res, next) => {
+  // 'photo' is the name of our file input field in the HTML form
+  let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('photo');
+
+  upload(req, res, function (err) {
+    const { body, user: { id, DisplayPicture, firstName, lastName } } = req;
+    // req.file contains information of uploaded file
+    // req.body contains information of text fields, if there were any
+    if (req.fileValidationError) {
+      return res.send(req.fileValidationError);
+    }
+    else if (err instanceof multer.MulterError) {
+      return res.send(err);
+    }
+    else if (err) {
+      return res.send(err);
+    }
+    if (req.file != undefined)
+      body.photo = req.file.path
+      createComment({ ...body, author: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName }).then(blog => res.json(blog)).catch(err => next(err))
+  })
+})
+
+
 
 module.exports = router;
