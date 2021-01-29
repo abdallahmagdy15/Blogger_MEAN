@@ -125,5 +125,5 @@ const createComment = (comment)=>{
 // verification that user who update or deletes his own blog/comment needs to be modified in more secure way
 
 module.exports = {
-    getBlogs, getOneBlog, createBlog, updateBlog, removeBlog, getFollowingsBlogs , createComment , updateComment , removeComment
+    getBlogs, getOneBlog, createBlog, updateBlog, removeBlog, getFollowingsBlogs , createComment 
 }
