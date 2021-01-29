@@ -6,7 +6,7 @@ const { getUsers } = require('../controllers/user');
 const getBlogs = async (query, pagination, author) => {
     if (author == undefined)
         return blogModel.find(query).sort([['updatedAt', -1]])
-            .limit(pagination.limit).skip(pagination.skip).populate().exec().then().catch(e => {
+            .limit(pagination.limit).skip(pagination.skip).exec().then().catch(e => {
                 throw new Error("Caught error in getBlogs :", e)
             })
     else {
@@ -28,8 +28,7 @@ const getBlogs = async (query, pagination, author) => {
 
 const getFollowingsBlogs = async (query, pagination, author, followingsIds) => {
     if (author == undefined)
-        return blogModel.find(query).sort([['updatedAt', -1]]).limit(pagination.limit).skip(pagination.skip).
-            populate().exec().then().catch(e => {
+        return blogModel.find(query).sort([['updatedAt', -1]]).limit(pagination.limit).skip(pagination.skip).exec().then().catch(e => {
                 throw new Error("Caught error in getFollowingsBlogs :", e)
             })
     else {
@@ -40,7 +39,7 @@ const getFollowingsBlogs = async (query, pagination, author, followingsIds) => {
     }
 }
 
-const getOneBlog = (id) => blogModel.findById(id).populate().exec().then().catch(e => {
+const getOneBlog = (id) => blogModel.findById(id).exec().then().catch(e => {
     throw new Error("Caught error in getOneBlog :", e)
 })
 
