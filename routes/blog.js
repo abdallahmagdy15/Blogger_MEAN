@@ -154,7 +154,7 @@ router.post('/comment', async (req, res, next) => {
     }
     if (req.file != undefined)
       body.photo = req.file.path
-      createComment({ ...body, author: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName }).then(blog => res.json(blog)).catch(err => next(err))
+      createComment({ ...body, user: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName }).then(blog => res.json(blog)).catch(err => next(err))
   })
 })
 
