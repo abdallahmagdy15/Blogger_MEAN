@@ -7,9 +7,10 @@ const userSchema = new Schema({
     password: { type: String, required: true },
     firstName: { type: String, required: true, maxLength: 140 },
     lastName: { type: String, required: true, maxLength: 140 },
-    DiplayPicture:String,
+    diplayPicture:String,
     email: { type: String, required: true, unique: true },
     dob: Date,
+    bio:String,
     blogs: [{ type: Schema.Types.ObjectId, ref: 'blog' }],
     followers: [{ type: Schema.Types.ObjectId, ref: 'user' }],
     followings: [{ type: Schema.Types.ObjectId, ref: 'user' }]
