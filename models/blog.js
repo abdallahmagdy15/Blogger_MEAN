@@ -6,11 +6,11 @@ const blogSchema = new Schema({
     title: { type: String, required: true, maxLength: 60 },
     body: { type: String, required: true, maxLength: 2100 },
     authorDp: String,
-    authorName: {type:String ,required:true},
+    authorName: { type: String, required: true },
     photo: String,
     tags: [String],
-    createdAt: {Date,required:true},
-    updatedAt: {Date,required:true},
+    createdAt: { type: Date, required: true },
+    updatedAt: { type: Date, required: true },
     comments: [{
         user: {
             type: Schema.Types.ObjectId,
@@ -18,7 +18,7 @@ const blogSchema = new Schema({
             required: true
         },
         userDp: String,
-        userName: {type:String,required: true},
+        userName: { type: String, required: true },
         body: {
             type: String,
             maxlength: 1024,
