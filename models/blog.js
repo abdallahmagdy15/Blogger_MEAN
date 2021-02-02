@@ -6,7 +6,7 @@ const blogSchema = new Schema({
     title: { type: String, required: true, maxLength: 60 },
     body: { type: String, required: true, maxLength: 2100 },
     authorDp: String,
-    authorName: {String ,required:true},
+    authorName: {type:String ,required:true},
     photo: String,
     tags: [String],
     createdAt: {Date,required:true},
