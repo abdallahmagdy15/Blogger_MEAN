@@ -2,6 +2,7 @@ const express = require('express');
 const router = require('./routes');
 const mongoose = require('mongoose');
 const app = express();
+const cors = require('cors')
 
 const { MONGODB_URI } = process.env;
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -10,7 +11,8 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true 
 
 app.use(express.json());
 //app.use(express.static(__dirname+ '/public'));
-//aaaa
+
+app.use(cors())
 
 // setup routes
 app.use('/', router);
