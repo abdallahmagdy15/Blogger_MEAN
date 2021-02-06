@@ -17,7 +17,7 @@ const userSchema = new Schema({
     followings: [{ type: Schema.Types.ObjectId, ref: 'user' }],
     links: {
         facebook: String,
-        linkedIn: String,
+        linkedin: String,
         instagram: String,
         twitter: String
     }

@@ -1,7 +1,6 @@
 const userModel = require('../models/user')
 const jwt = require('jsonwebtoken')
 const { promisify } = require('util')
-const auth = require('../middleware/authorization')
 const jwtSignAsync = promisify(jwt.sign)
 
 
@@ -17,21 +16,29 @@ const getFollowers = async (id) => {
         throw new Error("Caught error in getFollowers :", e)
     })
 }
+
 const getUser = (id) => {
     return userModel.findById(id).exec().then().catch(e => {
         throw new Error("Caught error in getUser :", e)
     })
 }
-const getUsers = (author) => {
+const getUsers = (author, currUserId) => {
     if (author == undefined)
-        return userModel.find({}).exec().then().catch(e => {
+        return userModel.find({}).where("_id").ne(currUserId).exec().then().catch(e => {
             throw new Error("Caught error in getUsers :", e)
         })
 
     return userModel.find({ $or: [{ firstName: { $regex: "^" + author } }, { lastName: { $regex: "^" + author } }] })
-        .exec().then().catch(e => {
+        .where("_id").ne(currUserId).exec().then().catch(e => {
             throw new Error("Caught error in getUser :", e)
         })
+}
+
+const getSuggestions = (currUser) => {
+    const excludedUsersIds = [...currUser.followings, currUser.id];
+    return userModel.find({ id: { $nin: excludedUsersIds } }).exec().then().catch(e => {
+        throw new Error("Caught error in getSuggestions :", e)
+    })
 }
 
 const register = (user) => userModel.create(user).then().catch(e => {
@@ -103,5 +110,5 @@ const update = (id, userUpdated) => userModel.findByIdAndUpdate(id, userUpdated,
     })
 
 module.exports = {
-    getUser, getUsers, getFollowers, getFollowings, register, login, update, remove, follow, unfollow
+    getUser, getUsers, getFollowers, getFollowings, register, login, update, remove, follow, unfollow, getSuggestions
 }
