@@ -7,13 +7,20 @@ const userSchema = new Schema({
     password: { type: String, required: true },
     firstName: { type: String, required: true, maxLength: 140 },
     lastName: { type: String, required: true, maxLength: 140 },
-    diplayPicture:String,
+    diplayPicture: String,
     email: { type: String, required: true, unique: true },
     dob: Date,
-    bio:String,
+    bio: String,
+    jobTitle:String,
     blogs: [{ type: Schema.Types.ObjectId, ref: 'blog' }],
     followers: [{ type: Schema.Types.ObjectId, ref: 'user' }],
-    followings: [{ type: Schema.Types.ObjectId, ref: 'user' }]
+    followings: [{ type: Schema.Types.ObjectId, ref: 'user' }],
+    links: {
+        facebook: String,
+        linkedIn: String,
+        instagram: String,
+        twitter: String
+    }
 }, {
     //not to return password
     toJSON: {
