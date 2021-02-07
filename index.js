@@ -3,26 +3,26 @@ const router = require('./routes');
 const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors')
-const cloudinary = require('cloudinary').v2
 
-const { MONGODB_URI,CLOUDINARY_URL } = process.env;
+const { MONGODB_URI} = process.env;
+
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Mongodb Connected !'))
   .catch((e) => console.log('caught error while connecting to db : ', e));
 
 app.use(express.json());
-//app.use(express.static(__dirname+ '/public'));
-cloudinary.config(CLOUDINARY_URL);
+
+
 app.use(cors())
 
 // setup routes
 app.use('/', router);
-app.use('/test', (req, res, next) => {
+app.use('/test', (req, res) => {
   res.json({ "test": "success" })
 })
 
 // if any other paths response with not found 404
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).end();
 });
 

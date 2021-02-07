@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer')
-const helpers = require('../helpers/helpers');
-const path = require('path')
-const cloudinary = require('cloudinary').v2
-const streamifier = require('streamifier')
+
+const cloudinary = require("../utils/cloudinary");
+const upload = require("../utils/multer");
+
 
 const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog, createComment } = require('../controllers/blog');
 
@@ -83,64 +82,24 @@ router.get('/:blogid', async (req, res, next) => {
 });
 
 
-//define the storage location for images
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/uploads');
-  },
-
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-  }
-});
-
-
 // create new blog
-router.post('/', async (req, res, next) => {
+router.post('/', upload.single("photo"), async (req, res, next) => {
   // 'photo' is the name of our file input field in the HTML form
-  let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('photo');
 
-  upload(req, res, function (err) {
-    const { body, user: { id, DisplayPicture, firstName, lastName } } = req;
-    if (req.fileValidationError) {
-      return res.send(req.fileValidationError);
-    }
-    else if (err instanceof multer.MulterError) {
-      return res.send(err);
-    }
-    else if (err) {
-      return res.send(err);
+  const { body, user: { id, DisplayPicture, firstName, lastName } } = req;
+
+  try {
+    // Upload image to cloudinary
+    if (req.file != undefined) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      body.photo = result.secure_url;
     }
 
-    // upload to cloudinary
-    let streamUpload = (req) => {
-      return new Promise((resolve, reject) => {
-        let stream = cloudinary.uploader.upload_stream(
-          (error, result) => {
-            if (result) {
-              resolve(result);
-            } else {
-              reject(error);
-            }
-          }
-        );
-
-        streamifier.createReadStream(req.file.buffer).pipe(stream);
-      });
-    };
-
-    async function upload(req) {
-      let result = await streamUpload(req);
-      console.log(result);
-    }
-
-    upload(req);
-
-    // end upload to cloudinary
-    if (req.file != undefined)
-      body.photo = req.file.path
-    createBlog({ ...body, author: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName }).then(blog => res.json(blog)).catch(err => next(err))
-  })
+    createBlog({ ...body, author: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName })
+      .then(blog => res.json(blog)).catch(err => next(err))
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 // update one blog *** needs auth middlware to check id of token == id of todo owner
@@ -160,6 +119,7 @@ router.delete('/:blogid', async (req, res, next) => {
   }
 });
 
+/*
 //create comment
 router.post('/comment', async (req, res, next) => {
   // 'photo' is the name of our file input field in the HTML form
@@ -183,7 +143,7 @@ router.post('/comment', async (req, res, next) => {
     createComment({ ...body, user: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName }).then(blog => res.json(blog)).catch(err => next(err))
   })
 })
-
+*/
 
 
 module.exports = router;

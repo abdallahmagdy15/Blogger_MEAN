@@ -53,7 +53,7 @@ const login = async ({ username, password }) => {
     if (!user)
         throw new Error('AUTHENTICATION_REQUIRED')
 
-    const valid = user.validatePassword(password);
+    const valid = await user.validatePassword(password);
 
     if (!valid)
         throw new Error('AUTHENTICATION_REQUIRED')
