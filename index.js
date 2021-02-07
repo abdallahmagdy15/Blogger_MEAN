@@ -3,15 +3,16 @@ const router = require('./routes');
 const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors')
+const cloudinary = require('cloudinary').v2
 
-const { MONGODB_URI } = process.env;
+const { MONGODB_URI,CLOUDINARY_URL } = process.env;
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Mongodb Connected !'))
   .catch((e) => console.log('caught error while connecting to db : ', e));
 
 app.use(express.json());
 //app.use(express.static(__dirname+ '/public'));
-
+cloudinary.config(CLOUDINARY_URL);
 app.use(cors())
 
 // setup routes
@@ -38,12 +39,12 @@ app.use((err, req, res, next) => {
     res.status(422).json({
       statusCode: 'validatorError', property: err.keyValue,
     });
-  };
+  }
   if (err.message === 'AUTHENTICATION_REQUIRED') {
     res.status(401).json({
       statusCode: 'validatorError', property: err.keyValue,
     });
-  };
+  }
 
   const { statusCode = 500 } = err;
   res.status(statusCode).json(err.message);
