@@ -3,6 +3,8 @@ const router = express.Router();
 const multer = require('multer')
 const helpers = require('../helpers/helpers');
 const path = require('path')
+const cloudinary = require('cloudinary').v2
+const streamifier = require('streamifier')
 
 const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog, createComment } = require('../controllers/blog');
 
@@ -100,8 +102,6 @@ router.post('/', async (req, res, next) => {
 
   upload(req, res, function (err) {
     const { body, user: { id, DisplayPicture, firstName, lastName } } = req;
-    // req.file contains information of uploaded file
-    // req.body contains information of text fields, if there were any
     if (req.fileValidationError) {
       return res.send(req.fileValidationError);
     }
@@ -111,6 +111,32 @@ router.post('/', async (req, res, next) => {
     else if (err) {
       return res.send(err);
     }
+
+    // upload to cloudinary
+    let streamUpload = (req) => {
+      return new Promise((resolve, reject) => {
+        let stream = cloudinary.uploader.upload_stream(
+          (error, result) => {
+            if (result) {
+              resolve(result);
+            } else {
+              reject(error);
+            }
+          }
+        );
+
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
+      });
+    };
+
+    async function upload(req) {
+      let result = await streamUpload(req);
+      console.log(result);
+    }
+
+    upload(req);
+
+    // end upload to cloudinary
     if (req.file != undefined)
       body.photo = req.file.path
     createBlog({ ...body, author: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName }).then(blog => res.json(blog)).catch(err => next(err))
@@ -154,7 +180,7 @@ router.post('/comment', async (req, res, next) => {
     }
     if (req.file != undefined)
       body.photo = req.file.path
-      createComment({ ...body, user: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName }).then(blog => res.json(blog)).catch(err => next(err))
+    createComment({ ...body, user: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName }).then(blog => res.json(blog)).catch(err => next(err))
   })
 })
 
