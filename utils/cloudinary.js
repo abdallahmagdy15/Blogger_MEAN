@@ -1,5 +1,4 @@
 const { CLOUD_NAME, CLOUD_KEY, CLOUD_SECRET } = process.env;
-console.log("cloud key" + CLOUD_KEY)
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
