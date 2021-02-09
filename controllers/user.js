@@ -6,11 +6,13 @@ const jwtSignAsync = promisify(jwt.sign)
 
 const getFollowings = async (id, { authorname, username }) => {
 
-    let query = {};
+    let query = { $or: {} };
     if (authorname != undefined)
-        query.$or = [{ firstName: { $regex: "^" + authorname } }, { lastName: { $regex: "^" + authorname } }];
+        query.$or.push(
+            { firstName: { $regex: "^" + authorname } },
+            { lastName: { $regex: "^" + authorname } });
     if (username != undefined)
-        query.username = username;
+        query.$or.push({ username })
 
     const { followings } = await getUser(id)
 
@@ -19,11 +21,13 @@ const getFollowings = async (id, { authorname, username }) => {
     })
 }
 const getFollowers = async (id, { authorname, username }) => {
-    let query = {};
+    let query = { $or: {} };
     if (authorname != undefined)
-        query.$or = [{ firstName: { $regex: "^" + authorname } }, { lastName: { $regex: "^" + authorname } }];
+        query.$or.push(
+            { firstName: { $regex: "^" + authorname } },
+            { lastName: { $regex: "^" + authorname } });
     if (username != undefined)
-        query.username = username;
+        query.$or.push({ username })
 
     const { followers } = await getUser(id)
     return userModel.find(query).where('_id').in(followers).exec().then().catch(e => {
@@ -39,16 +43,14 @@ const getUser = (id) => {
 
 const getSuggestions = (currUser, { authorname, username }) => {
     const excludedUsersIds = [...currUser.followings, currUser.id];
-    let query = {};
+    let query = { $or: {} };
     if (authorname != undefined)
-        query.$or =
-            [{ firstName: { $regex: "^" + authorname } },
-            { lastName: { $regex: "^" + authorname } },
-
-            ];
+        query.$or.push(
+            { firstName: { $regex: "^" + authorname } },
+            { lastName: { $regex: "^" + authorname } });
     if (username != undefined)
         query.$or.push({ username })
-        
+
     query.id = { $nin: excludedUsersIds }
     return userModel.find(query).exec().then().catch(e => {
         throw new Error("Caught error in getSuggestions :" + e.message)
