@@ -29,8 +29,8 @@ const getBlogs = async (query, pagination, author) => {
 const getFollowingsBlogs = async (query, pagination, author, followingsIds) => {
     if (author == undefined)
         return blogModel.find(query).sort([['updatedAt', -1]]).limit(pagination.limit).skip(pagination.skip).exec().then().catch(e => {
-                throw new Error("Caught error in getFollowingsBlogs :", e)
-            })
+            throw new Error("Caught error in getFollowingsBlogs :", e)
+        })
     else {
         return blogModel.find(query).where('_id').in(followingsIds)
             .limit(pagination.limit).skip(pagination.skip).exec().then().catch(e => {
@@ -53,7 +53,7 @@ const createBlog = async (blog) => {
     //update user blogs
     userModel.findByIdAndUpdate(blog.author, { $push: { blogs: _blog.id } }, { new: true })
         .exec().then().catch(e => {
-            throw new Error("Caught error in createBlog :", e)
+            throw new Error("Caught error in createB log :", e)
         })
 
     return _blog;
@@ -61,8 +61,9 @@ const createBlog = async (blog) => {
 //
 
 
-const updateBlog = (id, blogid, blogBody) => {
-    if (id != blogid)
+const updateBlog = async (userblogsIds, blogid, blogBody) => {
+    let ublog = userblogsIds.filter(id => id == blogid)[0];
+    if (ublog == undefined)
         return { "status": "Denied , not authorized to update this blog!" }
     blogBody.updatedAt = new Date()
     return blogModel.findByIdAndUpdate(blogid, blogBody, { new: true })
@@ -70,59 +71,122 @@ const updateBlog = (id, blogid, blogBody) => {
             throw new Error("Caught error in updateBlog :", e)
         })
 }
-// remove also the blog from blogModel *-*********
-const removeBlog = async (id, blogid) => {
+
+
+const removeBlog = async ({ blogs, id }, blogid) => {
+    let ublog = blogs.filter(bid => bid == blogid)[0];
+    if (ublog == undefined)
+        return { "status": "Denied , not authorized to delete this blog!" }
     const blog = await blogModel.findByIdAndDelete(blogid)
         .exec().then().catch(e => {
             throw new Error("Caught error in removeBlog :", e)
         })
 
-    if (id != blogid)
-        return { "status": "Denied , not authorized to delete this blog!" }
-
-    await userModel.findByIdAndUpdate(query.author, { $pull: { blogs: blog.id } }, { new: true })
+    await userModel.findByIdAndUpdate(id, { $pull: { blogs: blog.id } }, { new: true })
         .exec().then().catch(e => {
             throw new Error("Caught error in removeBlog :", e)
         })
     return blog
 }
 
-const createComment = (comment)=>{
-    return blogModel.findByIdAndUpdate(comment.blogId, { $push: { comments: comment } }, { new: true })
+const createComment = async (blogid, comment) => {
+
+    comment.createdAt = new Date()
+    comment.updatedAt = new Date()
+
+    await blogModel.findByIdAndUpdate(blogid, { $push: { comments: comment } }, { new: true })
         .exec().then().catch(e => {
             throw new Error("Caught error in createComment :", e)
         })
+    return comment;
 }
 
-// //*/********** */
-// const updateComment = (loggedinId, commentId, commentBody) => {
-//     if (loggedinId != commentBody.userId)
-//         return { "status": "Denied , not authorized to update this comment!" }
-//     commentBody.updatedAt = new Date()
-//     return blogModel.findByIdAndUpdate(commentBody.blogId, commentBody, { new: true })
-//         .exec().then().catch(e => {
-//             throw new Error("Caught error in updateBlog :", e)
-//         })
-// }
+const updateComment = async (uid, blogid, commentid, comment) => {
+    let blog = await blogModel.findById(blogid).exec();
+    let cmnt = blog.comments.id(commentid).remove();
+    cmnt.body = comment.body;
+    if (cmnt.author != uid)
+        return { "status": "Denied , not authorized to update this comment!" }
+    cmnt.updatedAt = new Date()
+    blog.comments.push(cmnt);
+    await blog.save(function (err) {
+        if (err)
+            throw new Error("Caught error in updateComment :", err)
+    })
+    return cmnt;
+}
 
-// const removeComment = async (id, commentId) => {
-//     const blog = await blogModel.findByIdAndDelete(blogid)
-//         .exec().then().catch(e => {
-//             throw new Error("Caught error in removeBlog :", e)
-//         })
 
-//     if (id != blogid)
-//         return { "status": "Denied , not authorized to delete this blog!" }
+const removeComment = async (uid, blogid, commentid) => {
+    let blog = await blogModel.findById(blogid).exec();
+    let cmnt = blog.comments.id(commentid).remove();
 
-//     await userModel.findByIdAndUpdate(query.author, { $pull: { blogs: blog.id } }, { new: true })
-//         .exec().then().catch(e => {
-//             throw new Error("Caught error in removeBlog :", e)
-//         })
-//     return blog
-// }
+    if (cmnt.author != uid)
+        return { "status": "Denied , not authorized to update this comment!" }
 
-// verification that user who update or deletes his own blog/comment needs to be modified in more secure way
+    await blog.save(function (err) {
+        if (err)
+            throw new Error("Caught error in updateComment :", err)
+    })
+    return cmnt;
+}
+
+const likeBlog = async (uid, blogid) => {
+    await blogModel.findByIdAndUpdate(blogid, { $addToSet: { likes: uid } }, { new: true })
+        .exec().then().catch(e => {
+            throw new Error("Caught error in likeBlog :", e)
+        })
+    return {
+        "status": "blog is liked !"
+    }
+}
+
+const unlikeBlog = async (uid, blogid) => {
+    await blogModel.findByIdAndUpdate(blogid, { $pull: { likes: uid } }, { new: true })
+        .exec().then().catch(e => {
+            throw new Error("Caught error in likeBlog :", e)
+        })
+    return {
+        "status": "blog is unliked !"
+    }
+}
+
+const likeComment = async (uid, blogid, commentid) => {
+    let blog = await blogModel.findById(blogid).exec();
+    let cmnt = blog.comments.id(commentid).remove();
+
+    cmnt.likes.addToSet(uid);
+
+    blog.comments.push(cmnt);
+    await blog.save(function (err) {
+        if (err)
+            throw new Error("Caught error in likeComment :", err)
+    })
+
+    return {
+        "status": "comment is liked !"
+    }
+}
+
+const unlikeComment = async (uid, blogid, commentid) => {
+    let blog = await blogModel.findById(blogid).exec();
+    let cmnt = blog.comments.id(commentid).remove();
+
+    cmnt.likes.pop(uid);
+
+    blog.comments.push(cmnt);
+    await blog.save(function (err) {
+        if (err)
+            throw new Error("Caught error in unlikeComment :", err)
+    })
+
+    return {
+        "status": "comment is unliked !"
+    }
+}
 
 module.exports = {
-    getBlogs, getOneBlog, createBlog, updateBlog, removeBlog, getFollowingsBlogs , createComment 
+    getBlogs, getOneBlog, createBlog, updateBlog, removeBlog, getFollowingsBlogs,
+    createComment, updateComment, removeComment, likeBlog, unlikeBlog, likeComment,
+    unlikeComment
 }

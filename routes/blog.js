@@ -5,7 +5,8 @@ const cloudinary = require("../utils/cloudinary");
 const upload = require("../utils/multer");
 
 
-const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog, createComment } = require('../controllers/blog');
+const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog,
+  createComment, updateComment, removeComment, likeBlog, unlikeBlog, likeComment, unlikeComment } = require('../controllers/blog');
 
 // get all blogs
 router.get('/search', async (req, res, next) => {
@@ -102,48 +103,97 @@ router.post('/', upload.single("photo"), async (req, res, next) => {
   }
 });
 
-// update one blog *** needs auth middlware to check id of token == id of todo owner
+// update one blog
 router.patch('/:blogid', (req, res, next) => {
-  const { user: { id }, body, params: { blogid } } = req;
-  updateBlog(id, blogid, body).then(blog => res.json(blog)).catch(err => next(err))
+  const { user: { blogs }, body, params: { blogid } } = req;
+  updateBlog(blogs, blogid, body).then(blog => res.json(blog)).catch(err => next(err))
 });
 
-// delete blog  *** needs auth middlware to check id of token == id of todo owner
+// delete blog
 router.delete('/:blogid', async (req, res, next) => {
-  const { user: { id }, params: { blogid } } = req;
+  const { user: { id, blogs }, params: { blogid } } = req;
   try {
-    const blog = await removeBlog(id, blogid)
+    const blog = await removeBlog({ id, blogs }, blogid)
     res.json(blog);
   } catch (e) {
     next(e);
   }
 });
 
-/*
-//create comment
-router.post('/comment', async (req, res, next) => {
+
+//comments 
+
+// create new comment
+router.post('/:blogid/comments', upload.single("photo"), async (req, res, next) => {
   // 'photo' is the name of our file input field in the HTML form
-  let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('photo');
 
-  upload(req, res, function (err) {
-    const { body, user: { id, DisplayPicture, firstName, lastName } } = req;
-    // req.file contains information of uploaded file
-    // req.body contains information of text fields, if there were any
-    if (req.fileValidationError) {
-      return res.send(req.fileValidationError);
+  const { body, params: { blogid }, user: { id, DisplayPicture, firstName, lastName } } = req;
+
+  try {
+    // Upload image to cloudinary
+    if (req.file != undefined) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      body.photo = result.secure_url;
     }
-    else if (err instanceof multer.MulterError) {
-      return res.send(err);
-    }
-    else if (err) {
-      return res.send(err);
-    }
-    if (req.file != undefined)
-      body.photo = req.file.path
-    createComment({ ...body, user: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName }).then(blog => res.json(blog)).catch(err => next(err))
-  })
+
+    createComment(blogid, { ...body, author: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName })
+      .then(comment => res.json(comment)).catch(err => next(err))
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// update one comment
+router.patch('/:blogid/comments/:commentid', (req, res, next) => {
+  const { user: { id }, body, params: { blogid, commentid } } = req;
+  updateComment(id, blogid, commentid, body).then(comment => res.json(comment)).catch(err => next(err))
+});
+
+// delete one comment
+router.delete('/:blogid/comments/:commentid', async (req, res, next) => {
+  const { user: { id }, params: { blogid, commentid } } = req;
+  try {
+    const comment = await removeComment(id, blogid, commentid)
+    res.json(comment);
+  } catch (e) {
+    next(e);
+  }
+});
+
+//like blog
+router.post('/:blogid/like', async (req, res, next) => {
+  const { params: { blogid }, user: { id } } = req;
+  await likeBlog(id, blogid).then(status => res.json(status)).catch(err => {
+    console.log(err);
+    next(err);
+  });
 })
-*/
 
+//unlike blog
+router.post('/:blogid/unlike', async (req, res, next) => {
+  const { params: { blogid }, user: { id } } = req;
+  await unlikeBlog(id, blogid).then(status => res.json(status)).catch(err => {
+    console.log(err);
+    next(err);
+  });
+})
+
+//like comment
+router.post('/:blogid/comments/:commentid/like', async (req, res, next) => {
+  const { params: { blogid , commentid }, user: { id } } = req;
+  await likeComment(id, blogid,commentid).then(status => res.json(status)).catch(err => {
+    console.log(err);
+    next(err);
+  });
+})
+
+//unlike comment
+router.post('/:blogid/comments/:commentid/unlike', async (req, res, next) => {
+  const { params: { blogid , commentid }, user: { id } } = req;
+  await unlikeComment(id, blogid,commentid).then(status => res.json(status)).catch(err => {
+    console.log(err);
+    next(err);
+  });
+})
 
 module.exports = router;

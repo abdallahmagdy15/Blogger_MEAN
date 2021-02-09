@@ -1,6 +1,25 @@
 const Mongoose = require('mongoose')
 const { Schema } = Mongoose
 
+const commentSchema = new Schema({
+        author: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        authorDp: String,
+        authorName: { type: String, required: true },
+        body: {
+            type: String,
+            maxlength: 1024,
+            required: true
+        },
+        createdAt: { type: Date, required: true },
+        updatedAt: { type: Date, required: true },
+        photo: String,
+        likes: [{type:Schema.Types.ObjectId, ref: 'user'}]
+    });
+
 const blogSchema = new Schema({
     author: { type: Schema.Types.ObjectId, ref: 'user', required: true },
     title: { type: String, required: true, maxLength: 60 },
@@ -11,23 +30,8 @@ const blogSchema = new Schema({
     tags: [String],
     createdAt: { type: Date, required: true },
     updatedAt: { type: Date, required: true },
-    comments: [{
-        user: {
-            type: Schema.Types.ObjectId,
-            ref: 'User',
-            required: true
-        },
-        userDp: String,
-        userName: { type: String, required: true },
-        body: {
-            type: String,
-            maxlength: 1024,
-            required: true
-        },
-        photo: String,
-        likesCount: Number
-    }],
-    likesCount: Number
+    comments: [commentSchema],
+    likes: [{type:Schema.Types.ObjectId, ref: 'user'}]
 })
 
 const blogModel = Mongoose.model('blog', blogSchema)
