@@ -1,23 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { getUser, getUsers, getFollowers, getFollowings,
+const { getUser, getFollowers, getFollowings,
   register, login, update, remove, follow, unfollow, getSuggestions } = require('../controllers/user');
 const authMiddleware = require('../middleware/authorization')
 
-// get users * search by name
-//users?author="aaa"
-router.get('/', authMiddleware, async (req, res, next) => {
-  let { query: { author }, user: { id } } = req
-  try {
-    const allUsers = await getUsers(author, id);
-    res.json(allUsers);
-  } catch (e) {
-    next(e);
-  }
-});
 
 //get user profile
-//users/123456
 router.get('/:userid', authMiddleware, async (req, res, next) => {
   let { params: { userid } } = req
   try {
@@ -28,8 +16,7 @@ router.get('/:userid', authMiddleware, async (req, res, next) => {
   }
 })
 
-//get followers
-//users/123456/followers
+//get followers* search by authorname or username
 router.get('/:userid/followers', authMiddleware, async (req, res, next) => {
   let { params: { userid }, query } = req
   try {
@@ -40,7 +27,7 @@ router.get('/:userid/followers', authMiddleware, async (req, res, next) => {
   }
 })
 
-//get followings
+//get followings * search by authorname or username
 router.get('/:userid/followings', authMiddleware, async (req, res, next) => {
   let { params: { userid } , query } = req
   try {
@@ -51,8 +38,8 @@ router.get('/:userid/followings', authMiddleware, async (req, res, next) => {
   }
 })
 
-//get suggestions
-router.get('/suggestions', authMiddleware, async (req, res, next) => {
+//get suggestions * search by authorname or username
+router.get('/suggestions/list', authMiddleware, async (req, res, next) => {
   let { user, query } = req
 
   try {

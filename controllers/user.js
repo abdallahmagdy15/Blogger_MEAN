@@ -6,73 +6,58 @@ const jwtSignAsync = promisify(jwt.sign)
 
 const getFollowings = async (id, { authorname, username }) => {
 
-    if (authorname == undefined)
-        authorname = "";
-    if (username == undefined)
-        username = "";
+    let query={};
+    if (authorname != undefined)
+        query.$or = [{ firstName: { $regex: "^" + authorname } }, { lastName: { $regex: "^" + authorname } }];
+    if (username != undefined)
+        query.username = username;
 
     const { followings } = await getUser(id)
 
-    return userModel.find({
-        $or: [{ firstName: { $regex: "^" + authorname } }, { lastName: { $regex: "^" + authorname } }],
-        username
-    }).where('_id').in(followings).exec().then().catch(e => {
-        throw new Error("Caught error in getFollowings :", e)
+    return userModel.find(query).where('_id').in(followings).exec().then().catch(e => {
+        throw new Error("Caught error in getFollowings :" + e.message)
     })
 }
 const getFollowers = async (id, { authorname, username }) => {
-    if (authorname == undefined)
-        authorname = "";
-    if (username == undefined)
-        username = "";
-        
+    let query={};
+    if (authorname != undefined)
+        query.$or = [{ firstName: { $regex: "^" + authorname } }, { lastName: { $regex: "^" + authorname } }];
+    if (username != undefined)
+        query.username = username;
+
     const { followers } = await getUser(id)
-    return userModel.find({
-        $or: [{ firstName: { $regex: "^" + authorname } }, { lastName: { $regex: "^" + authorname } }],
-        username
-    }).where('_id').in(followers).exec().then().catch(e => {
-        throw new Error("Caught error in getFollowers :", e)
+    return userModel.find(query).where('_id').in(followers).exec().then().catch(e => {
+        throw new Error("Caught error in getFollowers :" + e.message)
     })
 }
 
 const getUser = (id) => {
     return userModel.findById(id).exec().then().catch(e => {
-        throw new Error("Caught error in getUser :", e)
+        throw new Error("Caught error in getUser :" + e.message)
     })
-}
-const getUsers = (author, currUserId) => {
-    if (author == undefined)
-        author = "";
-
-    return userModel.find({ $or: [{ firstName: { $regex: "^" + author } }, { lastName: { $regex: "^" + author } }] })
-        .where("_id").ne(currUserId).exec().then().catch(e => {
-            throw new Error("Caught error in getUser :", e)
-        })
 }
 
 const getSuggestions = (currUser, { authorname, username }) => {
     const excludedUsersIds = [...currUser.followings, currUser.id];
-    if (authorname == undefined)
-        authorname = "";
-    if (username == undefined)
-        username = "";
-    return userModel.find({
-        id: { $nin: excludedUsersIds },
-        $or: [{ firstName: { $regex: "^" + authorname } }, { lastName: { $regex: "^" + authorname } }],
-        username
-    }).exec().then().catch(e => {
-        throw new Error("Caught error in getSuggestions :", e)
+    let query={};
+    if (authorname != undefined)
+        query.$or = [{ firstName: { $regex: "^" + authorname } }, { lastName: { $regex: "^" + authorname } }];
+    if (username != undefined)
+        query.username = username;
+    query.id = { $nin: excludedUsersIds }
+    return userModel.find(query).exec().then().catch(e => {
+        throw new Error("Caught error in getSuggestions :" + e.message)
     })
 }
 
 const register = (user) => userModel.create(user).then().catch(e => {
-    throw new Error("Caught error in register :", e)
+    throw new Error("Caught error in register :" + e.message)
 })
 
 const login = async ({ username, password }) => {
     //login
     const user = await userModel.findOne({ username }).exec().then().catch(e => {
-        throw new Error("Caught error in login :", e)
+        throw new Error("Caught error in login :" + e.message)
     })
     if (!user)
         throw new Error('AUTHENTICATION_REQUIRED')
@@ -86,7 +71,7 @@ const login = async ({ username, password }) => {
         username: username,
         id: user.id,
     }, process.env.SECRET, { expiresIn: '1d' }).then().catch(e => {
-        throw new Error("Caught error in login :", e)
+        throw new Error("Caught error in login :" + e.message)
     });
 
     return { ...user.toJSON(), token } // this will be returned as promise
@@ -98,13 +83,13 @@ const follow = (userid, followedid) => {
     //update follower's followings
     userModel.findByIdAndUpdate(userid, { $addToSet: { followings: followedid } }, { new: true })
         .exec().then().catch(e => {
-            throw new Error("Caught error in follow :", e)
+            throw new Error("Caught error in follow :" + e.message)
         })
 
     //update followed one's followers
     userModel.findByIdAndUpdate(followedid, { $addToSet: { followers: userid } }, { new: true })
         .exec().then().catch(e => {
-            throw new Error("Caught error in follow :", e)
+            throw new Error("Caught error in follow :" + e.message)
         })
     return { "status": "followed" }
 }
@@ -112,27 +97,27 @@ const unfollow = (userid, followedid) => {
     //update follower's followings
     userModel.findByIdAndUpdate(userid, { $pull: { followings: followedid } }, { new: true })
         .exec().then().catch(e => {
-            throw new Error("Caught error in unfollow :", e)
+            throw new Error("Caught error in unfollow :" + e.message)
         })
 
     //update followed one's followers
     userModel.findByIdAndUpdate(followedid, { $pull: { followers: userid } }, { new: true })
         .exec().then().catch(e => {
-            throw new Error("Caught error in unfollow :", e)
+            throw new Error("Caught error in unfollow :" + e.message)
         })
     return { "status": "unfollowed" }
 
 }
 
 const remove = (id) => userModel.findByIdAndDelete(id).exec().then().catch(e => {
-    throw new Error("Caught error in remove *user* :", e)
+    throw new Error("Caught error in remove *user* :" + e.message)
 })
 
 const update = (id, userUpdated) => userModel.findByIdAndUpdate(id, userUpdated, { new: true })
     .exec().then().catch(e => {
-        throw new Error("Caught error in  update *user* :", e)
+        throw new Error("Caught error in  update *user* :" + e.message)
     })
 
 module.exports = {
-    getUser, getUsers, getFollowers, getFollowings, register, login, update, remove, follow, unfollow, getSuggestions
+    getUser, getFollowers, getFollowings, register, login, update, remove, follow, unfollow, getSuggestions
 }
