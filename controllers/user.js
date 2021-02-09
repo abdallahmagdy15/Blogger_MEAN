@@ -4,15 +4,33 @@ const { promisify } = require('util')
 const jwtSignAsync = promisify(jwt.sign)
 
 
-const getFollowings = async (id) => {
+const getFollowings = async (id, { authorname, username }) => {
+
+    if (authorname == undefined)
+        authorname = "";
+    if (username == undefined)
+        username = "";
+
     const { followings } = await getUser(id)
-    return userModel.find().where('_id').in(followings).exec().then().catch(e => {
+
+    return userModel.find({
+        $or: [{ firstName: { $regex: "^" + authorname } }, { lastName: { $regex: "^" + authorname } }],
+        username
+    }).where('_id').in(followings).exec().then().catch(e => {
         throw new Error("Caught error in getFollowings :", e)
     })
 }
-const getFollowers = async (id) => {
+const getFollowers = async (id, { authorname, username }) => {
+    if (authorname == undefined)
+        authorname = "";
+    if (username == undefined)
+        username = "";
+        
     const { followers } = await getUser(id)
-    return userModel.find().where('_id').in(followers).exec().then().catch(e => {
+    return userModel.find({
+        $or: [{ firstName: { $regex: "^" + authorname } }, { lastName: { $regex: "^" + authorname } }],
+        username
+    }).where('_id').in(followers).exec().then().catch(e => {
         throw new Error("Caught error in getFollowers :", e)
     })
 }
@@ -24,9 +42,7 @@ const getUser = (id) => {
 }
 const getUsers = (author, currUserId) => {
     if (author == undefined)
-        return userModel.find({}).where("_id").ne(currUserId).exec().then().catch(e => {
-            throw new Error("Caught error in getUsers :", e)
-        })
+        author = "";
 
     return userModel.find({ $or: [{ firstName: { $regex: "^" + author } }, { lastName: { $regex: "^" + author } }] })
         .where("_id").ne(currUserId).exec().then().catch(e => {
@@ -34,9 +50,17 @@ const getUsers = (author, currUserId) => {
         })
 }
 
-const getSuggestions = (currUser) => {
+const getSuggestions = (currUser, { authorname, username }) => {
     const excludedUsersIds = [...currUser.followings, currUser.id];
-    return userModel.find({ id: { $nin: excludedUsersIds } }).exec().then().catch(e => {
+    if (authorname == undefined)
+        authorname = "";
+    if (username == undefined)
+        username = "";
+    return userModel.find({
+        id: { $nin: excludedUsersIds },
+        $or: [{ firstName: { $regex: "^" + authorname } }, { lastName: { $regex: "^" + authorname } }],
+        username
+    }).exec().then().catch(e => {
         throw new Error("Caught error in getSuggestions :", e)
     })
 }
