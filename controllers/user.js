@@ -6,7 +6,7 @@ const jwtSignAsync = promisify(jwt.sign)
 
 const getFollowings = async (id, { authorname, username }) => {
 
-    let query = { $or: {} };
+    let query = { $or: [] };
     if (authorname != undefined)
         query.$or.push(
             { firstName: { $regex: "^" + authorname } },
@@ -21,7 +21,7 @@ const getFollowings = async (id, { authorname, username }) => {
     })
 }
 const getFollowers = async (id, { authorname, username }) => {
-    let query = { $or: {} };
+    let query = { $or: [] };
     if (authorname != undefined)
         query.$or.push(
             { firstName: { $regex: "^" + authorname } },
@@ -43,7 +43,7 @@ const getUser = (id) => {
 
 const getSuggestions = (currUser, { authorname, username }) => {
     const excludedUsersIds = [...currUser.followings, currUser.id];
-    let query = { $or: {} };
+    let query = { $or: [] };
     if (authorname != undefined)
         query.$or.push(
             { firstName: { $regex: "^" + authorname } },
