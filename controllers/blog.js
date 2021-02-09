@@ -1,42 +1,22 @@
 const blogModel = require('../models/blog')
 const userModel = require('../models/user')
 
-const { getUsers } = require('../controllers/user');
 
-const getBlogs = async (query, pagination, author) => {
-    if (author == undefined)
-        return blogModel.find(query).sort([['updatedAt', -1]])
-            .limit(pagination.limit).skip(pagination.skip).exec().then().catch(e => {
-                throw new Error("Caught error in getBlogs :", e)
-            })
-    else {
-        const foundUsers = await getUsers(author).then().catch(e => {
+const getBlogs = async (query, pagination) => {
+
+    return blogModel.find(query).sort([['updatedAt', -1]])
+        .limit(pagination.limit).skip(pagination.skip).exec().then().catch(e => {
             throw new Error("Caught error in getBlogs :", e)
         })
-        let blogsIds = []
-        foundUsers.forEach(u => {
-            blogsIds.push(...u.blogs)
-        })
-        console.log(...blogsIds)
-        return blogModel.find(query).where('_id').in(blogsIds)
-            .limit(pagination.limit).skip(pagination.skip).exec().then().catch(e => {
-                throw new Error("Caught error in getBlogs :", e)
-            })
-    }
 }
 
 
-const getFollowingsBlogs = async (query, pagination, author, followingsIds) => {
-    if (author == undefined)
-        return blogModel.find(query).sort([['updatedAt', -1]]).limit(pagination.limit).skip(pagination.skip).exec().then().catch(e => {
+const getFollowingsBlogs = async (query, pagination, followingsIds) => {
+    return blogModel.find(query).where('_id').in(followingsIds).sort([['updatedAt', -1]])
+        .limit(pagination.limit).skip(pagination.skip).exec()
+        .then().catch(e => {
             throw new Error("Caught error in getFollowingsBlogs :", e)
         })
-    else {
-        return blogModel.find(query).where('_id').in(followingsIds)
-            .limit(pagination.limit).skip(pagination.skip).exec().then().catch(e => {
-                throw new Error("Caught error in getFollowingsBlogs :", e)
-            })
-    }
 }
 
 const getOneBlog = (id) => blogModel.findById(id).exec().then().catch(e => {

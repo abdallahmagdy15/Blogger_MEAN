@@ -14,6 +14,8 @@ router.get('/search', async (req, res, next) => {
   let _query = {}
   if (title != undefined)
     _query.title = { $regex: "^" + title }
+  if (author != undefined)
+    _query.authorName = { $regex: "^" + author }
   if (tag != undefined)
     _query.tags = tag
   if (body != undefined)
@@ -23,13 +25,15 @@ router.get('/search', async (req, res, next) => {
   if (skip == undefined)
     skip = 0
   let _pagination = { limit: Number(limit), skip: Number(skip) }
-  getBlogs(_query, _pagination, author).then(blogs => res.json(blogs)).catch(err => next(err))
+  getBlogs(_query, _pagination).then(blogs => res.json(blogs)).catch(err => next(err))
 });
 
 //get followings' blogs
 router.get('/followings', async (req, res, next) => {
   let { query: { author, body, title, tag, limit, skip } } = req;
   let _query = {}
+  if (author != undefined)
+    _query.authorName = { $regex: "^" + author }
   if (title != undefined)
     _query.title = { $regex: "^" + title }
   if (tag != undefined)
@@ -42,7 +46,7 @@ router.get('/followings', async (req, res, next) => {
     skip = 0
   let _pagination = { limit: Number(limit), skip: Number(skip) }
   try {
-    const blogs = await getFollowingsBlogs(_query, _pagination, author, req.user.followings) //check in controller if author undefined
+    const blogs = await getFollowingsBlogs(_query, _pagination, req.user.followings) //check in controller if author undefined
     res.json(blogs);
   } catch (e) {
     next(e);
@@ -65,7 +69,7 @@ router.get('/user/:userid', async (req, res, next) => {
     skip = 0
   let _pagination = { limit: Number(limit), skip: Number(skip) }
   try {
-    const blogs = await getBlogs(_query, _pagination, undefined)
+    const blogs = await getBlogs(_query, _pagination)
     res.json(blogs);
   } catch (e) {
     next(e);
@@ -180,8 +184,8 @@ router.post('/:blogid/unlike', async (req, res, next) => {
 
 //like comment
 router.post('/:blogid/comments/:commentid/like', async (req, res, next) => {
-  const { params: { blogid , commentid }, user: { id } } = req;
-  await likeComment(id, blogid,commentid).then(status => res.json(status)).catch(err => {
+  const { params: { blogid, commentid }, user: { id } } = req;
+  await likeComment(id, blogid, commentid).then(status => res.json(status)).catch(err => {
     console.log(err);
     next(err);
   });
@@ -189,8 +193,8 @@ router.post('/:blogid/comments/:commentid/like', async (req, res, next) => {
 
 //unlike comment
 router.post('/:blogid/comments/:commentid/unlike', async (req, res, next) => {
-  const { params: { blogid , commentid }, user: { id } } = req;
-  await unlikeComment(id, blogid,commentid).then(status => res.json(status)).catch(err => {
+  const { params: { blogid, commentid }, user: { id } } = req;
+  await unlikeComment(id, blogid, commentid).then(status => res.json(status)).catch(err => {
     console.log(err);
     next(err);
   });
