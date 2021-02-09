@@ -10,16 +10,14 @@ const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, remove
 
 // get all blogs
 router.get('/search', async (req, res, next) => {
-  let { query: { author, body, title, tag, limit, skip } } = req;
-  let _query = {}
+  let { query: { body, title, tag, limit, skip } } = req;
+  let _query = { $or: [] }
   if (title != undefined)
-    _query.title = { $regex: "^" + title }
-  if (author != undefined)
-    _query.authorName = { $regex: "^" + author }
+    _query.$or.push({ title: { $regex: "^" + title } });
   if (tag != undefined)
-    _query.tags = tag
+    _query.$or.push({ tags: tag })
   if (body != undefined)
-    _query.body = { $regex: ".*" + body + ".*" }
+    _query.$or.push({ body: { $regex: ".*" + body + ".*" } })
   if (limit == undefined || limit == '')
     limit = 10
   if (skip == undefined)
@@ -30,16 +28,15 @@ router.get('/search', async (req, res, next) => {
 
 //get followings' blogs
 router.get('/followings', async (req, res, next) => {
-  let { query: { author, body, title, tag, limit, skip } } = req;
-  let _query = {}
-  if (author != undefined)
-    _query.authorName = { $regex: "^" + author }
+  let { query: { body, title, tag, limit, skip } } = req;
+  let _query = { $or: [] }
   if (title != undefined)
-    _query.title = { $regex: "^" + title }
+    _query.$or.push({ title: { $regex: "^" + title } });
   if (tag != undefined)
-    _query.tags = tag
+    _query.$or.push({ tags: tag })
   if (body != undefined)
-    _query.body = { $regex: ".*" + body + ".*" }
+    _query.$or.push({ body: { $regex: ".*" + body + ".*" } })
+
   if (limit == undefined || limit == '')
     limit = 10
   if (skip == undefined)
@@ -56,13 +53,15 @@ router.get('/followings', async (req, res, next) => {
 // get user blogs
 router.get('/user/:userid', async (req, res, next) => {
   let { params: { userid }, query: { title, body, tag, limit, skip } } = req;
-  let _query = { author: userid }
-  if (title != undefined && title != '')
-    _query.title = { $regex: "^" + title }
-  if (tag != undefined && tag != '')
-    _query.tags = tag
+  let _query = { author: userid, $or: [] }
+  
+  if (title != undefined)
+    _query.$or.push({ title: { $regex: "^" + title } });
+  if (tag != undefined)
+    _query.$or.push({ tags: tag })
   if (body != undefined)
-    _query.body = { $regex: ".*" + body + ".*" }
+    _query.$or.push({ body: { $regex: ".*" + body + ".*" } })
+
   if (limit == undefined || limit == '')
     limit = 10
   if (skip == undefined)
