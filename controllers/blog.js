@@ -39,7 +39,6 @@ const createBlog = async (blog) => {
     return _blog;
 
 }
-//
 
 
 const updateBlog = async (userblogsIds, blogid, blogBody) => {
