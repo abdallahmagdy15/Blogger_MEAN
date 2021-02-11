@@ -14,9 +14,9 @@ app.use(express.json());
 
 
 app.use(cors())
-
+router.options('/', cors())
 // setup routes
-app.use('/', router);
+app.use('/',cors() , router);
 app.use('/test', (req, res) => {
   res.json({ "test": "success" })
 })
