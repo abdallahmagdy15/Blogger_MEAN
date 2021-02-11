@@ -11,7 +11,7 @@ const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, remove
 // get all blogs
 router.get('/search', async (req, res, next) => {
   let { query: { body, title, tag, limit, skip } } = req;
-  let _query = { $or: [] }
+  let _query = { $or: [{}] }
   if (title != undefined)
     _query.$or.push({ title: { $regex: "^" + title } });
   if (tag != undefined)
@@ -29,7 +29,7 @@ router.get('/search', async (req, res, next) => {
 //get followings' blogs
 router.get('/followings', async (req, res, next) => {
   let { query: { body, title, tag, limit, skip } } = req;
-  let _query = { $or: [] }
+  let _query = { $or: [{}] }
   if (title != undefined)
     _query.$or.push({ title: { $regex: "^" + title } });
   if (tag != undefined)
@@ -53,7 +53,7 @@ router.get('/followings', async (req, res, next) => {
 // get user blogs
 router.get('/user/:userid', async (req, res, next) => {
   let { params: { userid }, query: { title, body, tag, limit, skip } } = req;
-  let _query = { author: userid, $or: [] }
+  let _query = { author: userid, $or: [{}] }
   
   if (title != undefined)
     _query.$or.push({ title: { $regex: "^" + title } });
