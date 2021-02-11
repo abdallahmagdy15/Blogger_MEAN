@@ -12,7 +12,7 @@ const getBlogs = async (query, pagination) => {
 
 
 const getFollowingsBlogs = async (query, pagination, followingsIds) => {
-    return blogModel.find(query).where('_id').in(followingsIds).sort([['updatedAt', -1]])
+    return blogModel.find(query).where('author').in(followingsIds).sort([['updatedAt', -1]])
         .limit(pagination.limit).skip(pagination.skip).exec()
         .then().catch(e => {
             throw new Error("Caught error in getFollowingsBlogs :"+ e.message)
