@@ -54,7 +54,7 @@ const getSuggestions = (currUser, { authorname, username }) => {
         query.$or.push({ username })
     if (query.$or.length > 1)
         query.$or.splice(0, 1)
-    query.id = { $nin: excludedUsersIds }
+    query._id = { $nin: excludedUsersIds }
     return userModel.find(query).exec().then().catch(e => {
         throw new Error("Caught error in getSuggestions :" + e.message)
     })
