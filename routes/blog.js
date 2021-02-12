@@ -22,6 +22,8 @@ router.get('/search', async (req, res, next) => {
     limit = 10
   if (skip == undefined)
     skip = 0
+  if (_query.$or.length > 1)
+    _query.$or.splice(0, 1)
   let _pagination = { limit: Number(limit), skip: Number(skip) }
   getBlogs(_query, _pagination).then(blogs => res.json(blogs)).catch(err => next(err))
 });
@@ -36,7 +38,8 @@ router.get('/followings', async (req, res, next) => {
     _query.$or.push({ tags: tag })
   if (body != undefined)
     _query.$or.push({ body: { $regex: ".*" + body + ".*" } })
-
+  if (_query.$or.length > 1)
+    _query.$or.splice(0, 1)
   if (limit == undefined || limit == '')
     limit = 10
   if (skip == undefined)
@@ -54,14 +57,15 @@ router.get('/followings', async (req, res, next) => {
 router.get('/user/:userid', async (req, res, next) => {
   let { params: { userid }, query: { title, body, tag, limit, skip } } = req;
   let _query = { author: userid, $or: [{}] }
-  
+
   if (title != undefined)
     _query.$or.push({ title: { $regex: "^" + title } });
   if (tag != undefined)
     _query.$or.push({ tags: tag })
   if (body != undefined)
     _query.$or.push({ body: { $regex: ".*" + body + ".*" } })
-
+    if (_query.$or.length > 1)
+    _query.$or.splice(0, 1)
   if (limit == undefined || limit == '')
     limit = 10
   if (skip == undefined)

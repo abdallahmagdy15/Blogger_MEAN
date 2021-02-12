@@ -13,7 +13,8 @@ const getFollowings = async (id, { authorname, username }) => {
             { lastName: { $regex: "^" + authorname } });
     if (username != undefined)
         query.$or.push({ username })
-
+    if (query.$or.length > 1)
+        query.$or.splice(0, 1)
     const { followings } = await getUser(id)
 
     return userModel.find(query).where('_id').in(followings).exec().then().catch(e => {
@@ -28,7 +29,8 @@ const getFollowers = async (id, { authorname, username }) => {
             { lastName: { $regex: "^" + authorname } });
     if (username != undefined)
         query.$or.push({ username })
-
+    if (query.$or.length > 1)
+        query.$or.splice(0, 1)
     const { followers } = await getUser(id)
     return userModel.find(query).where('_id').in(followers).exec().then().catch(e => {
         throw new Error("Caught error in getFollowers :" + e.message)
@@ -50,7 +52,8 @@ const getSuggestions = (currUser, { authorname, username }) => {
             { lastName: { $regex: "^" + authorname } });
     if (username != undefined)
         query.$or.push({ username })
-
+    if (query.$or.length > 1)
+        query.$or.splice(0, 1)
     query.id = { $nin: excludedUsersIds }
     return userModel.find(query).exec().then().catch(e => {
         throw new Error("Caught error in getSuggestions :" + e.message)
