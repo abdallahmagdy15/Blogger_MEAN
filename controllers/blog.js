@@ -133,7 +133,8 @@ const unlikeBlog = async (uid, blogid) => {
 
 const likeComment = async (uid, blogid, commentid) => {
     let blog = await blogModel.findById(blogid).exec();
-    let cmnt = blog.comments.id(commentid).remove();
+    let cmnt = blog.comments.id(commentid)
+    blog.comments.id(commentid).remove();
 
     cmnt.likes.addToSet(uid);
     console.log(cmnt);
