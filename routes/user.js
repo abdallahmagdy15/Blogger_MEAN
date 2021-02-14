@@ -3,6 +3,8 @@ const router = express.Router();
 const { getUser, getFollowers, getFollowings,
   register, login, update, remove, follow, unfollow, getSuggestions } = require('../controllers/user');
 const authMiddleware = require('../middleware/authorization')
+const upload = require("../utils/multer");
+const cloudinary = require("../utils/cloudinary");
 
 
 //get user profile
@@ -95,12 +97,15 @@ router.post('/register', async (req, res, next) => {
 });
 
 
-//_______unrequired
-
 // update one user data
-router.patch('/', authMiddleware, async (req, res, next) => {
+router.patch('/', authMiddleware,upload.single("photo"), async (req, res, next) => {
   const { user: { id }, body: userUpdated } = req;
-  try {
+    try {
+      // Upload image to cloudinary
+      if (req.file != undefined) {
+        const result = await cloudinary.uploader.upload(req.file.path);
+        userUpdated.dp = result.secure_url;
+      }
     const user = await update(id, userUpdated)
     res.json(user);
   } catch (e) {
