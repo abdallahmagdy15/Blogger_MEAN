@@ -98,7 +98,7 @@ router.post('/register', async (req, res, next) => {
 
 
 // update one user data
-router.patch('/', authMiddleware,upload.single("photo"), async (req, res, next) => {
+router.patch('/', authMiddleware,upload.single("dp"), async (req, res, next) => {
   const { user: { id }, body: userUpdated } = req;
     try {
       // Upload image to cloudinary
