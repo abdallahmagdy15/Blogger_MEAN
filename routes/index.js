@@ -2,7 +2,7 @@ const express = require('express')
 const blogsRouter = require('./blog')
 const userRouter = require('./user')
 const router = express.Router()
-const { getBlogs } = require('../controllers/blog')
+const { getBlogs, getOneBlog } = require('../controllers/blog')
 
 const authMiddleware = require('../middleware/authorization')
 
@@ -22,6 +22,17 @@ router.get('/home', async (req, res, next) => {
         next(e);
     }
 });
+
+// get one blog by id
+router.get('/blogs/:blogid', async (req, res, next) => {
+    try {
+      const blog = await getOneBlog(req.params.blogid)
+      res.json(blog);
+    } catch (e) {
+      next(e);
+    }
+  });
+  
 router.use('/blogs', authMiddleware, blogsRouter)
 
 router.use('/users', userRouter)
