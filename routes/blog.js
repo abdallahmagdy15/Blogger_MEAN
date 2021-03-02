@@ -5,7 +5,7 @@ const cloudinary = require("../utils/cloudinary");
 const upload = require("../utils/multer");
 
 
-const { getBlogs, getFollowingsBlogs, getOneBlog, createBlog, updateBlog, removeBlog,
+const { getBlogs, getFollowingsBlogs, createBlog, updateBlog, removeBlog,
   createComment, updateComment, removeComment, likeBlog, unlikeBlog, likeComment, unlikeComment } = require('../controllers/blog');
 
 // get all blogs
