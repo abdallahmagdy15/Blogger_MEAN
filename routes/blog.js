@@ -118,16 +118,6 @@ router.delete('/:blogid', async (req, res, next) => {
   }
 });
 
-// get one blog by id
-router.get('/:blogid', async (req, res, next) => {
-  try {
-    const blog = await getOneBlog(req.params.blogid)
-    res.json(blog);
-  } catch (e) {
-    next(e);
-  }
-});
-
 
 //comments 
 
