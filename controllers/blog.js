@@ -5,7 +5,9 @@ const userModel = require('../models/user')
 const getBlogs = async (query, pagination) => {
 
     return blogModel.find(query).sort([['updatedAt', -1]])
-        .limit(pagination.limit).skip(pagination.skip).exec().then().catch(e => {
+        .limit(pagination.limit).skip(pagination.skip).exec().then(a=>{
+            console.log('--> blogs : ',a);
+        }).catch(e => {
             throw new Error("Caught error in getBlogs :"+ e.message)
         })
 }
