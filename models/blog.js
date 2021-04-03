@@ -17,7 +17,8 @@ const commentSchema = new Schema({
     createdAt: { type: Date, required: true },
     updatedAt: { type: Date, required: true },
     photo: String,
-    likes: [{ type: Schema.Types.ObjectId, ref: 'user' }]
+    likes: [{ type: Schema.Types.ObjectId, ref: 'user' }],
+    likesCount:number
 });
 
 const blogSchema = new Schema({
