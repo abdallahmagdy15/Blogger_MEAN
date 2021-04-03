@@ -8,31 +8,32 @@ const authMiddleware = require('../middleware/authorization')
 
 // get all blogs for any user * homepage*
 router.get('/home', async (req, res, next) => {
-    let { query: { limit, skip } } = req;
-    let _query = {}
-    if (limit == undefined || limit == '')
-        limit = 10
-    if (skip == undefined)
-        skip = 0
-    let _pagination = { limit: Number(limit), skip: Number(skip) }
-    try {
-        const blogs = await getBlogs(_query, _pagination, undefined) //check in controller if author undefined
-        res.json(blogs);
-    } catch (e) {
-        next(e);
-    }
+  let { query: { limit, skip } } = req;
+  let _query = {}
+  if (limit == undefined || limit == '')
+    limit = 10
+  if (skip == undefined)
+    skip = 0
+  let _pagination = { limit: Number(limit), skip: Number(skip) }
+  try {
+    console.log(_pagination);
+    const blogs = await getBlogs(_query, _pagination, undefined) //check in controller if author undefined
+    res.json(blogs);
+  } catch (e) {
+    next(e);
+  }
 });
 
-  // get one blog by id
+// get one blog by id
 router.get('/blogs/blog/:blogid', async (req, res, next) => {
-    try {
-      const blog = await getOneBlog(req.params.blogid)
-      res.json(blog);
-    } catch (e) {
-      next(e);
-    }
-  });
-  
+  try {
+    const blog = await getOneBlog(req.params.blogid)
+    res.json(blog);
+  } catch (e) {
+    next(e);
+  }
+});
+
 router.use('/blogs', authMiddleware, blogsRouter)
 
 router.use('/users', userRouter)
