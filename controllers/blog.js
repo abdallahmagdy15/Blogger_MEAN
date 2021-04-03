@@ -3,13 +3,15 @@ const userModel = require('../models/user')
 
 
 const getBlogs = async (query, pagination) => {
-
-    return blogModel.find(query).sort([['updatedAt', -1]])
-        .limit(pagination.limit).skip(pagination.skip).exec().then(a=>{
-            console.log(`skip : ${pagination.skip} , count : ${a.length}` , a.slice(0,2));
+    let blogs;
+    await blogModel.find(query).sort([['updatedAt', -1]])
+        .limit(pagination.limit).skip(pagination.skip).exec().then(a => {
+            blogs = a;
+            console.log(`skip : ${pagination.skip} , count : ${a.length}`, a.slice(0, 2));
         }).catch(e => {
-            throw new Error("Caught error in getBlogs :"+ e.message)
+            throw new Error("Caught error in getBlogs :" + e.message)
         })
+    return blogs;
 }
 
 
@@ -17,12 +19,12 @@ const getFollowingsBlogs = async (query, pagination, followingsIds) => {
     return blogModel.find(query).where('author').in(followingsIds).sort([['updatedAt', -1]])
         .limit(pagination.limit).skip(pagination.skip).exec()
         .then().catch(e => {
-            throw new Error("Caught error in getFollowingsBlogs :"+ e.message)
+            throw new Error("Caught error in getFollowingsBlogs :" + e.message)
         })
 }
 
 const getOneBlog = (id) => blogModel.findById(id).exec().then().catch(e => {
-    throw new Error("Caught error in getOneBlog :"+ e.message)
+    throw new Error("Caught error in getOneBlog :" + e.message)
 })
 
 const createBlog = async (blog) => {
@@ -30,12 +32,12 @@ const createBlog = async (blog) => {
     blog.updatedAt = new Date()
 
     const _blog = await blogModel.create(blog).then().catch(e => {
-        throw new Error("Caught error in createBlog :"+ e.message)
+        throw new Error("Caught error in createBlog :" + e.message)
     })
     //update user blogs
     userModel.findByIdAndUpdate(blog.author, { $push: { blogs: _blog.id } }, { new: true })
         .exec().then().catch(e => {
-            throw new Error("Caught error in createB log :"+ e.message)
+            throw new Error("Caught error in createB log :" + e.message)
         })
 
     return _blog;
@@ -50,7 +52,7 @@ const updateBlog = async (userblogsIds, blogid, blogBody) => {
     blogBody.updatedAt = new Date()
     return blogModel.findByIdAndUpdate(blogid, blogBody, { new: true })
         .exec().then().catch(e => {
-            throw new Error("Caught error in updateBlog :"+ e.message)
+            throw new Error("Caught error in updateBlog :" + e.message)
         })
 }
 
@@ -61,12 +63,12 @@ const removeBlog = async ({ blogs, id }, blogid) => {
         return { "status": "Denied , not authorized to delete this blog!" }
     const blog = await blogModel.findByIdAndDelete(blogid)
         .exec().then().catch(e => {
-            throw new Error("Caught error in removeBlog :"+ e.message)
+            throw new Error("Caught error in removeBlog :" + e.message)
         })
 
     await userModel.findByIdAndUpdate(id, { $pull: { blogs: blog.id } }, { new: true })
         .exec().then().catch(e => {
-            throw new Error("Caught error in removeBlog :"+ e.message)
+            throw new Error("Caught error in removeBlog :" + e.message)
         })
     return blog
 }
@@ -78,7 +80,7 @@ const createComment = async (blogid, comment) => {
 
     await blogModel.findByIdAndUpdate(blogid, { $push: { comments: comment } }, { new: true })
         .exec().then().catch(e => {
-            throw new Error("Caught error in createComment :"+ e.message)
+            throw new Error("Caught error in createComment :" + e.message)
         })
     return comment;
 }
@@ -93,7 +95,7 @@ const updateComment = async (uid, blogid, commentid, comment) => {
     blog.comments.push(cmnt);
     await blog.save(function (err) {
         if (err)
-            throw new Error("Caught error in updateComment :"+ err.message)
+            throw new Error("Caught error in updateComment :" + err.message)
     })
     return cmnt;
 }
@@ -108,7 +110,7 @@ const removeComment = async (uid, blogid, commentid) => {
 
     await blog.save(function (err) {
         if (err)
-            throw new Error("Caught error in updateComment :"+ err.message)
+            throw new Error("Caught error in updateComment :" + err.message)
     })
     return cmnt;
 }
@@ -116,7 +118,7 @@ const removeComment = async (uid, blogid, commentid) => {
 const likeBlog = async (uid, blogid) => {
     await blogModel.findByIdAndUpdate(blogid, { $addToSet: { likes: uid } }, { new: true })
         .exec().then().catch(e => {
-            throw new Error("Caught error in likeBlog :"+ e.message)
+            throw new Error("Caught error in likeBlog :" + e.message)
         })
     return {
         "status": "blog is liked !"
@@ -126,7 +128,7 @@ const likeBlog = async (uid, blogid) => {
 const unlikeBlog = async (uid, blogid) => {
     await blogModel.findByIdAndUpdate(blogid, { $pull: { likes: uid } }, { new: true })
         .exec().then().catch(e => {
-            throw new Error("Caught error in likeBlog :"+ e.message)
+            throw new Error("Caught error in likeBlog :" + e.message)
         })
     return {
         "status": "blog is unliked !"
@@ -142,7 +144,7 @@ const likeComment = async (uid, blogid, commentid) => {
     blog.comments.push(cmnt);
     await blog.save(function (err) {
         if (err)
-            throw new Error("Caught error in likeComment :"+ err.message)
+            throw new Error("Caught error in likeComment :" + err.message)
     })
 
     return {
@@ -159,7 +161,7 @@ const unlikeComment = async (uid, blogid, commentid) => {
     blog.comments.push(cmnt);
     await blog.save(function (err) {
         if (err)
-            throw new Error("Caught error in unlikeComment :"+ err.message)
+            throw new Error("Caught error in unlikeComment :" + err.message)
     })
 
     return {
