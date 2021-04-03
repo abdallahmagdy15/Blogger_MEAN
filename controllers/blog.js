@@ -6,7 +6,7 @@ const getBlogs = async (query, pagination) => {
 
     return blogModel.find(query).sort([['updatedAt', -1]])
         .limit(pagination.limit).skip(pagination.skip).exec().then(a=>{
-            console.log('--> blogs : ',a);
+            console.log(`skip : ${pagination.skip} , count : ${a.length}` , a.slice(0,2));
         }).catch(e => {
             throw new Error("Caught error in getBlogs :"+ e.message)
         })

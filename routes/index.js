@@ -17,7 +17,7 @@ router.get('/home', async (req, res, next) => {
   let _pagination = { limit: Number(limit), skip: Number(skip) }
   try {
     console.log(_pagination);
-    const blogs = await getBlogs(_query, _pagination, undefined) //check in controller if author undefined
+    const blogs = await getBlogs(_query, _pagination) //check in controller if author undefined
     res.json(blogs);
   } catch (e) {
     next(e);
