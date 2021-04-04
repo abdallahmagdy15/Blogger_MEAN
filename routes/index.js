@@ -43,12 +43,12 @@ router.get('/test', (req, res, next) => {
     limit = 10
   if (skip == undefined)
     skip = 0
-  const data = new Schema({
+  const dataSchema = new Schema({
     name: String,
     num: Number
   })
-  const dataModel = Mongoose.model('data', data);
-  res.json(dataModel.find().limit(Number(limit)).skip(Number(skip)).sort([['num',-1]]));
+  const dataModel = Mongoose.model('data', dataSchema);
+  res.json(await dataModel.find().limit(Number(limit)).skip(Number(skip)).sort([['num',-1]]).exec());
 })
 router.use('/blogs', authMiddleware, blogsRouter)
 
