@@ -17,8 +17,7 @@ const commentSchema = new Schema({
     createdAt: { type: Date, required: true },
     updatedAt: { type: Date, required: true },
     photo: String,
-    likes: [{ type: Schema.Types.ObjectId, ref: 'user' }],
-    likesCount: Number
+    likes: [{ type: Schema.Types.ObjectId, ref: 'user' }]
 });
 
 const blogSchema = new Schema({
@@ -32,7 +31,9 @@ const blogSchema = new Schema({
     createdAt: { type: Date, required: true },
     updatedAt: { type: Date, required: true },
     comments: [commentSchema],
-    likes: [{ type: Schema.Types.ObjectId, ref: 'user' }]
+    likes: [{ type: Schema.Types.ObjectId, ref: 'user' }],
+    likesCount: Number
+
 })
 
 const blogModel = Mongoose.model('blog', blogSchema)

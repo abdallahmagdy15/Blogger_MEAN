@@ -34,25 +34,7 @@ router.get('/blogs/blog/:blogid', async (req, res, next) => {
     next(e);
   }
 });
-//testing ................
-const Mongoose = require('mongoose')
-  const { Schema } = Mongoose
-const dataSchema = new Schema({
-  name: String,
-  num: Number
-})
-const dataModel = Mongoose.model('data', dataSchema);
 
-router.get('/test',async (req, res, next) => {
-  
-  let { query: { limit, skip } } = req;
-  if (limit == undefined || limit == '')
-    limit = 10
-  if (skip == undefined)
-    skip = 0
-  const _data = await dataModel.find().limit(Number(limit)).skip(Number(skip)).sort([['num', -1]]).exec();
-  res.json(_data);
-})
 router.use('/blogs', authMiddleware, blogsRouter)
 
 router.use('/users', userRouter)
