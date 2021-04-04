@@ -47,7 +47,8 @@ router.get('/test', (req, res, next) => {
     name: String,
     num: Number
   })
-  res.json(data.find().limit(Number(limit)).skip(Number(skip)).sort([['num',-1]]));
+  const dataModel = Mongoose.model('data', data);
+  res.json(dataModel.find().limit(Number(limit)).skip(Number(skip)).sort([['num',-1]]));
 })
 router.use('/blogs', authMiddleware, blogsRouter)
 
