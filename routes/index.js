@@ -35,7 +35,7 @@ router.get('/blogs/blog/:blogid', async (req, res, next) => {
   }
 });
 
-router.get('/test', (req, res, next) => {
+router.get('/test',async (req, res, next) => {
   const Mongoose = require('mongoose')
   const { Schema } = Mongoose
   let { query: { limit, skip } } = req;
