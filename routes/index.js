@@ -34,6 +34,11 @@ router.get('/blogs/blog/:blogid', async (req, res, next) => {
     next(e);
   }
 });
+const dataSchema = new Schema({
+  name: String,
+  num: Number
+})
+const dataModel = Mongoose.model('data', dataSchema);
 
 router.get('/test',async (req, res, next) => {
   const Mongoose = require('mongoose')
@@ -43,11 +48,6 @@ router.get('/test',async (req, res, next) => {
     limit = 10
   if (skip == undefined)
     skip = 0
-  const dataSchema = new Schema({
-    name: String,
-    num: Number
-  })
-  const dataModel = Mongoose.model('data', dataSchema);
   const _data = await dataModel.find().limit(Number(limit)).skip(Number(skip)).sort([['num', -1]]).exec();
   res.json(_data);
 })
