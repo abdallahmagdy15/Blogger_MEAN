@@ -13,7 +13,7 @@ router.get('/search', async (req, res, next) => {
   let { query: { body, title, tag, limit, skip } } = req;
   let _query = { $or: [{}] }
   if (title != undefined)
-    _query.$or.push({ title: { $regex: "^" + title } });
+    _query.$or.push({ title: { $regex: ".*" + title + ".*" } });
   if (tag != undefined)
     _query.$or.push({ tags: tag })
   if (body != undefined)
@@ -64,7 +64,7 @@ router.get('/user/:userid', async (req, res, next) => {
     _query.$or.push({ tags: tag })
   if (body != undefined)
     _query.$or.push({ body: { $regex: ".*" + body + ".*" } })
-    if (_query.$or.length > 1)
+  if (_query.$or.length > 1)
     _query.$or.splice(0, 1)
   if (limit == undefined || limit == '')
     limit = 10
@@ -93,7 +93,8 @@ router.post('/', upload.single("photo"), async (req, res, next) => {
       const result = await cloudinary.uploader.upload(req.file.path);
       body.photo = result.secure_url;
     }
-
+    
+    body.tags = JSON.parse(body.tags[0])
     createBlog({ ...body, author: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName })
       .then(blog => res.json(blog)).catch(err => next(err))
   } catch (err) {
