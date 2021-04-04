@@ -34,6 +34,9 @@ router.get('/blogs/blog/:blogid', async (req, res, next) => {
     next(e);
   }
 });
+//testing ................
+const Mongoose = require('mongoose')
+  const { Schema } = Mongoose
 const dataSchema = new Schema({
   name: String,
   num: Number
@@ -41,8 +44,7 @@ const dataSchema = new Schema({
 const dataModel = Mongoose.model('data', dataSchema);
 
 router.get('/test',async (req, res, next) => {
-  const Mongoose = require('mongoose')
-  const { Schema } = Mongoose
+  
   let { query: { limit, skip } } = req;
   if (limit == undefined || limit == '')
     limit = 10
