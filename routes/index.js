@@ -5,6 +5,7 @@ const router = express.Router()
 const { getBlogs, getOneBlog } = require('../controllers/blog')
 
 const authMiddleware = require('../middleware/authorization')
+const { route } = require('./blog')
 
 // get all blogs for any user * homepage*
 router.get('/home', async (req, res, next) => {
@@ -34,6 +35,20 @@ router.get('/blogs/blog/:blogid', async (req, res, next) => {
   }
 });
 
+router.get('/test', (req, res, next) => {
+  const Mongoose = require('mongoose')
+  const { Schema } = Mongoose
+  let { query: { limit, skip } } = req;
+  if (limit == undefined || limit == '')
+    limit = 10
+  if (skip == undefined)
+    skip = 0
+  const data = new Schema({
+    name: String,
+    num: Number
+  })
+  res.json(data.find().limit(Number(limit)).skip(Number(skip)).sort([['num',-1]]));
+})
 router.use('/blogs', authMiddleware, blogsRouter)
 
 router.use('/users', userRouter)

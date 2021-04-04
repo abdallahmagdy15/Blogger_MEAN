@@ -3,9 +3,8 @@ const userModel = require('../models/user')
 
 
 const getBlogs = async (query, pagination) => {
-    //.sort([['updatedAt', -1]])
     return blogModel.find(query).limit(pagination.limit)
-        .skip(pagination.skip).exec().then().catch(e => {
+        .skip(pagination.skip).sort([['updatedAt', -1]]).exec().then().catch(e => {
             throw new Error("Caught error in getBlogs :" + e.message)
         })
 }
