@@ -93,7 +93,7 @@ router.post('/', upload.single("photo"), async (req, res, next) => {
       body.photo = result.secure_url;
     }
     if (body.tags)
-      body.tags = JSON.parse(body.tags[0])
+      body.tags = JSON.parse(body.tags)
     createBlog({ ...body, author: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName })
       .then(blog => res.json(blog)).catch(err => next(err))
   } catch (err) {
