@@ -86,15 +86,14 @@ router.post('/', upload.single("photo"), async (req, res, next) => {
   // 'photo' is the name of our file input field in the HTML form
 
   const { body, user: { id, DisplayPicture, firstName, lastName } } = req;
-  console.log('create blog router [body object] : ', body);
   try {
     // Upload image to cloudinary
     if (req.file != undefined) {
       const result = await cloudinary.uploader.upload(req.file.path);
       body.photo = result.secure_url;
     }
-
-    body.tags = JSON.parse(body.tags[0])
+    if (body.tags)
+      body.tags = JSON.parse(body.tags[0])
     createBlog({ ...body, author: id, authorDp: DisplayPicture, authorName: firstName + ' ' + lastName })
       .then(blog => res.json(blog)).catch(err => next(err))
   } catch (err) {
